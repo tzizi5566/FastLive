@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kop.fastlive.register.RegisterActivity"
+    >
+
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/tb_titlebar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/colorPrimaryDark"
+      android:gravity="center"
+      app:contentInsetStart="0dp"
+      >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="注册新用户"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        tools:ignore="HardcodedText"
+        />
+
+  </android.support.v7.widget.Toolbar>
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:id="@+id/ll_user_name"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      android:paddingBottom="15dp"
+      android:paddingLeft="30dp"
+      android:paddingRight="30dp"
+      android:paddingTop="30dp"
+      app:layout_constraintTop_toBottomOf="@+id/tb_titlebar"
+      >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableStart="@drawable/ic_account"
+        />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/edt_user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:background="@android:color/transparent"
+        android:hint="请输入注册账号（至少为8个字符）"
+        android:textColor="@android:color/black"
+        android:textColorHint="#ccc"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText"
+        />
+
+  </android.support.v7.widget.LinearLayoutCompat>
+
+  <View
+      android:id="@+id/view1"
+      android:layout_width="match_parent"
+      android:layout_height="1px"
+      android:background="#3000"
+      app:layout_constraintTop_toBottomOf="@id/ll_user_name"
+      />
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:id="@+id/ll_password"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      android:paddingBottom="15dp"
+      android:paddingLeft="30dp"
+      android:paddingRight="30dp"
+      android:paddingTop="30dp"
+      app:layout_constraintTop_toBottomOf="@+id/view1"
+      >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableStart="@drawable/ic_password"
+        />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/edt_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:background="@android:color/transparent"
+        android:hint="请确认登录密码（至少为8个字符）"
+        android:inputType="textPassword"
+        android:textColor="@android:color/black"
+        android:textColorHint="#ccc"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText"
+        />
+
+  </android.support.v7.widget.LinearLayoutCompat>
+
+  <View
+      android:id="@+id/view2"
+      android:layout_width="match_parent"
+      android:layout_height="1px"
+      android:background="#3000"
+      app:layout_constraintTop_toBottomOf="@id/ll_password"
+      />
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:id="@+id/ll_rePassword"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      android:paddingBottom="15dp"
+      android:paddingLeft="30dp"
+      android:paddingRight="30dp"
+      android:paddingTop="30dp"
+      app:layout_constraintTop_toBottomOf="@+id/view2"
+      >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableStart="@drawable/ic_password"
+        />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/edt_rePassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:background="@android:color/transparent"
+        android:hint="请确认登录密码（至少为8个字符）"
+        android:inputType="textPassword"
+        android:textColor="@android:color/black"
+        android:textColorHint="#ccc"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText"
+        />
+
+  </android.support.v7.widget.LinearLayoutCompat>
+
+  <android.support.v7.widget.AppCompatButton
+      android:id="@+id/btn_register"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:layout_marginLeft="50dp"
+      android:layout_marginRight="50dp"
+      android:layout_marginTop="20dp"
+      android:background="@drawable/btn_bkg_red_rect_round"
+      android:text="注册新账号"
+      android:textColor="@color/colorPrimaryDark"
+      app:layout_constraintTop_toBottomOf="@+id/ll_rePassword"
+      tools:ignore="HardcodedText"
+      />
+
+  <android.support.v7.widget.AppCompatTextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:gravity="center"
+      android:text="注册即表示同意 小熊直播条款"
+      app:layout_constraintTop_toBottomOf="@+id/btn_register"
+      tools:ignore="HardcodedText"
+      />
+
+</android.support.constraint.ConstraintLayout>
