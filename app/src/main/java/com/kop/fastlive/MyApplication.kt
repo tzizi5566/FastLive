@@ -2,6 +2,7 @@ package com.kop.fastlive
 
 import android.app.Application
 import com.kop.fastlive.module.editprofile.CustomProfile
+import com.tencent.TIMManager
 import com.tencent.TIMUserProfile
 import com.tencent.ilivesdk.ILiveSDK
 import com.tencent.livesdk.ILVLiveConfig
@@ -29,7 +30,7 @@ class MyApplication : Application() {
     custom.add(CustomProfile.CUSTOM_LEVEL)
     custom.add(CustomProfile.CUSTOM_SEND)
     custom.add(CustomProfile.CUSTOM_RENZHENG)
-//    TIMManager.getInstance().initFriendshipSettings(CustomProfile.allBaseInfo, custom)
+    TIMManager.getInstance().initFriendshipSettings(CustomProfile.allBaseInfo, custom)
 
     ILVLiveManager.getInstance().init(ILVLiveConfig())
   }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -32,7 +32,10 @@
 
   <android.support.v4.widget.NestedScrollView
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="0dp"
+      android:fillViewport="true"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/tb_titlebar"
       >
 
     <android.support.v7.widget.LinearLayoutCompat
@@ -52,8 +55,8 @@
           >
 
         <android.support.v7.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/ic_info_avatar"
             />
 
@@ -109,7 +112,7 @@
       <View
           android:layout_width="match_parent"
           android:layout_height="1px"
-          android:background="#333"
+          android:background="#3000"
           />
 
       <com.kop.fastlive.widget.ProfileTextView
@@ -139,7 +142,7 @@
       <View
           android:layout_width="match_parent"
           android:layout_height="1px"
-          android:background="#333"
+          android:background="#3000"
           />
 
       <android.support.v7.widget.AppCompatButton
@@ -157,4 +160,4 @@
 
   </android.support.v4.widget.NestedScrollView>
 
-</android.support.v7.widget.LinearLayoutCompat>
+</android.support.constraint.ConstraintLayout>

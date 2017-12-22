@@ -12,10 +12,10 @@ class CustomProfile {
   companion object {
     //自定义字段
     private val PREFIX = "Tag_Profile_Custom_"
-    val CUSTOM_RENZHENG = PREFIX + "renzhen"
-    val CUSTOM_LEVEL = PREFIX + "level"
-    val CUSTOM_GET: String = PREFIX + "getNums"
-    val CUSTOM_SEND = PREFIX + "sendNums"
+    val CUSTOM_RENZHENG = PREFIX + "ATTEST"
+    val CUSTOM_LEVEL = PREFIX + "LEVEL"
+    val CUSTOM_GET: String = PREFIX + "GET"
+    val CUSTOM_SEND = PREFIX + "SEND"
 
     //腾讯基础字段
     val allBaseInfo = (TIMFriendshipManager.TIM_PROFILE_FLAG_BIRTHDAY or
