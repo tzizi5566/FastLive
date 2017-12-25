@@ -28,7 +28,7 @@ open class TransParentDialog(activity: Activity) {
     }
   }
 
-  fun show() {
+  open fun show() {
     dialog.show()
   }
 

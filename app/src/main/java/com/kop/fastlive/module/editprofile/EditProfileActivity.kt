@@ -1,14 +1,16 @@
 package com.kop.fastlive.module.editprofile
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import com.kop.fastlive.R
-import com.kop.fastlive.module.editprofile.EditStrProfileDialog.OnOKListener
 import com.kop.fastlive.utils.ImgUtil
+import com.kop.fastlive.utils.PicChooserHelper
 import com.tencent.TIMCallBack
+import com.tencent.TIMFriendGenderType
 import com.tencent.TIMFriendshipManager
 import com.tencent.TIMUserProfile
 import com.tencent.TIMValueCallBack
@@ -26,6 +28,8 @@ import kotlinx.android.synthetic.main.activity_edit_profile.ll_send_nums
 import kotlinx.android.synthetic.main.activity_edit_profile.ll_sign
 
 class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
+
+  private var mPicChooseHelp: PicChooserHelper? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -94,19 +98,13 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     ll_send_nums.updateValue(getValue(customInfo, CustomProfile.CUSTOM_SEND, "0"))
   }
 
-  private fun getValue(customInfo: Map<String, ByteArray>?, key: String,
-      defaultValue: String): String {
-    customInfo?.let {
-      val valueBytes = customInfo[key]
-      if (valueBytes != null) {
-        return String(valueBytes)
-      }
-    }
-    return defaultValue
+  private fun getValue(customInfo: Map<String, ByteArray>, key: String, default: String): String {
+    val valueBytes = customInfo[key]
+    return valueBytes?.toString() ?: default
   }
 
   override fun onClick(v: View?) {
-    when (v!!.id) {
+    when (v?.id) {
       ll_avatar.id -> choosePic()
       ll_nick_name.id -> showEditNickNameDialog()
       ll_gender.id -> showEditGenderDialog()
@@ -118,16 +116,45 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
   }
 
   private fun showEditLocationDialog() {
+    val dialog = EditStrProfileDialog(this)
+    dialog.setOnOKListener(object : EditStrProfileDialog.OnOKListener {
+      override fun onOk(title: String, content: String) {
+        TIMFriendshipManager.getInstance().setLocation(content, object : TIMCallBack {
+          override fun onSuccess() {
+            getSelfInfo()
+          }
 
+          override fun onError(i: Int, s: String) {
+            Toast.makeText(this@EditProfileActivity, "更新地区失败：$s", Toast.LENGTH_SHORT).show()
+          }
+        })
+      }
+    })
+    dialog.show("地区", R.drawable.ic_info_location, ll_location.getValue())
   }
 
   private fun showEditRenzhengDialog() {
+    val dialog = EditStrProfileDialog(this)
+    dialog.setOnOKListener(object : EditStrProfileDialog.OnOKListener {
+      override fun onOk(title: String, content: String) {
+        TIMFriendshipManager.getInstance().setCustomInfo(CustomProfile.CUSTOM_RENZHENG,
+            content.toByteArray(), object : TIMCallBack {
+          override fun onSuccess() {
+            getSelfInfo()
+          }
 
+          override fun onError(i: Int, s: String) {
+            Toast.makeText(this@EditProfileActivity, "更新认证失败：$s", Toast.LENGTH_SHORT).show()
+          }
+        })
+      }
+    })
+    dialog.show("认证", R.drawable.ic_info_renzhen, ll_renzheng.getValue())
   }
 
   private fun showEditSignDialog() {
     val dialog = EditStrProfileDialog(this)
-    dialog.setOnOKListener(object : OnOKListener {
+    dialog.setOnOKListener(object : EditStrProfileDialog.OnOKListener {
       override fun onOk(title: String, content: String) {
         TIMFriendshipManager.getInstance().setSelfSignature(content, object : TIMCallBack {
           override fun onSuccess() {
@@ -144,14 +171,74 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
   }
 
   private fun showEditGenderDialog() {
+    val dialog = EditGenderDialog(this)
+    dialog.setOnChangeGenderListener(object : EditGenderDialog.OnChangeGenderListener {
+      override fun onChangeGender(isMale: Boolean) {
+        val gender = if (isMale) TIMFriendGenderType.Male else TIMFriendGenderType.Female
+        TIMFriendshipManager.getInstance().setGender(gender, object : TIMCallBack {
+          override fun onSuccess() {
+            getSelfInfo()
+          }
 
+          override fun onError(i: Int, s: String) {
+            Toast.makeText(this@EditProfileActivity, "更新性别失败：$s", Toast.LENGTH_SHORT).show()
+          }
+        })
+      }
+    })
+    dialog.show(ll_gender.getValue() == "男")
   }
 
   private fun showEditNickNameDialog() {
+    val dialog = EditStrProfileDialog(this)
+    dialog.setOnOKListener(object : EditStrProfileDialog.OnOKListener {
+      override fun onOk(title: String, content: String) {
+        TIMFriendshipManager.getInstance().setNickName(content, object : TIMCallBack {
+          override fun onSuccess() {
+            getSelfInfo()
+          }
 
+          override fun onError(i: Int, s: String) {
+            Toast.makeText(this@EditProfileActivity, "更新昵称失败：$s", Toast.LENGTH_SHORT).show()
+          }
+        })
+      }
+    })
+    dialog.show("昵称", R.drawable.ic_info_nickname, ll_nick_name.getValue())
   }
 
   private fun choosePic() {
+    mPicChooseHelp = PicChooserHelper(this)
+    mPicChooseHelp?.setOnChooseResultListener(object : PicChooserHelper.OnChooseResultListener {
+      override fun onSuccess(url: String) {
+        updateAvatar(url)
+      }
 
+      override fun onFail(msg: String) {
+        Toast.makeText(this@EditProfileActivity, "选择失败：$msg", Toast.LENGTH_SHORT).show()
+      }
+
+    })
+    mPicChooseHelp?.showDialog()
+  }
+
+  private fun updateAvatar(url: String) {
+    TIMFriendshipManager.getInstance().setFaceUrl(url, object : TIMCallBack {
+      override fun onSuccess() {
+        getSelfInfo()
+      }
+
+      override fun onError(i: Int, s: String) {
+        Toast.makeText(this@EditProfileActivity, "头像更新失败：" + s, Toast.LENGTH_SHORT).show()
+      }
+    })
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (mPicChooseHelp != null) {
+      mPicChooseHelp?.onActivityResult(requestCode, resultCode, data)
+    } else {
+      super.onActivityResult(requestCode, resultCode, data)
+    }
   }
 }

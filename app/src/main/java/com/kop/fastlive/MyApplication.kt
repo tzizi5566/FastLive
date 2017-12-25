@@ -2,6 +2,7 @@ package com.kop.fastlive
 
 import android.app.Application
 import com.kop.fastlive.module.editprofile.CustomProfile
+import com.kop.fastlive.utils.QnUploadHelper
 import com.tencent.TIMManager
 import com.tencent.TIMUserProfile
 import com.tencent.ilivesdk.ILiveSDK
@@ -20,6 +21,7 @@ class MyApplication : Application() {
   override fun onCreate() {
     super.onCreate()
     initLiveSdk()
+    initQiNiu()
   }
 
   private fun initLiveSdk() {
@@ -33,6 +35,14 @@ class MyApplication : Application() {
     TIMManager.getInstance().initFriendshipSettings(CustomProfile.allBaseInfo, custom)
 
     ILVLiveManager.getInstance().init(ILVLiveConfig())
+  }
+
+  private fun initQiNiu() {
+    QnUploadHelper.init(
+        "c9SZK9sXguQ4hQBksgk1b5qJuXNtBVLDxPi2WSFF",
+        "DuWKkKwfW5EDaCE5OEfytklw3JP0Astk3seX3usR",
+        "http://7xslu7.com1.z0.glb.clouddn.com/",
+        "tzizi5566")
   }
 
   fun setSelfProfile(userProfile: TIMUserProfile) {

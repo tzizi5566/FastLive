@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/dialog_white_round_bkg"
+    android:padding="30dp"
+    >
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_camera"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:layout_gravity="center"
+      android:background="@drawable/btn_bkg_blue_rect_round"
+      android:gravity="center"
+      android:text="拍照"
+      android:textColor="@android:color/holo_blue_dark"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:ignore="HardcodedText"
+      />
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_album"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:layout_gravity="center"
+      android:layout_marginTop="14dp"
+      android:background="@drawable/btn_bkg_red_rect_round"
+      android:gravity="center"
+      android:text="相册"
+      android:textColor="@color/colorPrimaryDark"
+      app:layout_constraintTop_toBottomOf="@+id/tv_camera"
+      tools:ignore="HardcodedText"
+      />
+
+</android.support.constraint.ConstraintLayout>

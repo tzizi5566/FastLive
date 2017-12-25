@@ -1,8 +1,9 @@
 package com.kop.fastlive.module.editprofile
 
 import android.app.Activity
+import android.support.v7.widget.AppCompatEditText
+import android.support.v7.widget.AppCompatTextView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.WindowManager
 import com.kop.fastlive.R
 import com.kop.fastlive.widget.TransParentDialog
@@ -17,7 +18,8 @@ import kotlinx.android.synthetic.main.dialog_edit_str_profile.view.tv_title
  */
 class EditStrProfileDialog(activity: Activity) : TransParentDialog(activity) {
 
-  private var mainView: View? = null
+  private var titleView: AppCompatTextView? = null
+  private var contentView: AppCompatEditText? = null
   private var mTitle: String? = null
 
   interface OnOKListener {
@@ -31,29 +33,29 @@ class EditStrProfileDialog(activity: Activity) : TransParentDialog(activity) {
   }
 
   init {
-    mainView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_str_profile, null,
+    val view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_str_profile, null,
         false)
-    mainView?.let {
-      setContentView(mainView!!)
+    titleView = view.tv_title
+    contentView = view.edt_content
+    view.tv_ok.setOnClickListener({
+      val content = contentView?.text.toString()
+      mTitle?.let { str -> onOKListener?.onOk(str, content) }
+      hide()
+    })
 
-      setWidthAndHeight(activity.window.decorView.width * 80 / 100,
-          WindowManager.LayoutParams.WRAP_CONTENT)
-      mainView!!.tv_ok.setOnClickListener({
-        val content = mainView!!.edt_content.text.toString()
-        onOKListener?.let {
-          onOKListener!!.onOk(mTitle!!, content)
-        }
-        hide()
-      })
-    }
+    setContentView(view)
+
+    setWidthAndHeight(activity.window.decorView.width * 80 / 100,
+        WindowManager.LayoutParams.WRAP_CONTENT)
   }
 
   fun show(title: String, resId: Int, defaultContent: String) {
     mTitle = title
-    mainView!!.tv_title.text = "请输入$title"
+    titleView?.text = "请输入$title"
 
-    mainView!!.edt_content.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0)
-    mainView!!.edt_content.setText(defaultContent)
+    contentView?.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0)
+    contentView?.setText(defaultContent)
+    contentView?.setSelection(defaultContent.length)
     show()
   }
 }
