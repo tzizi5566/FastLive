@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".module.editprofile.EditProfileActivity"
+    >
+
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/tb_titlebar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/colorPrimaryDark"
+      android:gravity="center"
+      app:contentInsetStart="0dp"
+      >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="编辑个人信息"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        tools:ignore="HardcodedText"
+        />
+
+  </android.support.v7.widget.Toolbar>
+
+  <android.support.v4.widget.NestedScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:fillViewport="true"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/tb_titlebar"
+      >
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+      <android.support.v7.widget.LinearLayoutCompat
+          android:id="@+id/ll_avatar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center_vertical"
+          android:minHeight="50dp"
+          android:orientation="horizontal"
+          android:padding="5dp"
+          >
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_info_avatar"
+            />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:text="头像"
+            android:textColor="#333"
+            tools:ignore="HardcodedText"
+            />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="5dp"
+            />
+
+      </android.support.v7.widget.LinearLayoutCompat>
+
+      <com.kop.fastlive.widget.ProfileEdit
+          android:id="@+id/ll_nick_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <com.kop.fastlive.widget.ProfileEdit
+          android:id="@+id/ll_gender"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <com.kop.fastlive.widget.ProfileEdit
+          android:id="@+id/ll_sign"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <com.kop.fastlive.widget.ProfileEdit
+          android:id="@+id/ll_renzheng"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <com.kop.fastlive.widget.ProfileEdit
+          android:id="@+id/ll_location"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <View
+          android:layout_width="match_parent"
+          android:layout_height="1px"
+          android:background="#3000"
+          />
+
+      <com.kop.fastlive.widget.ProfileTextView
+          android:id="@+id/ll_id"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <com.kop.fastlive.widget.ProfileTextView
+          android:id="@+id/ll_level"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <com.kop.fastlive.widget.ProfileTextView
+          android:id="@+id/ll_get_nums"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <com.kop.fastlive.widget.ProfileTextView
+          android:id="@+id/ll_send_nums"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          />
+
+      <View
+          android:layout_width="match_parent"
+          android:layout_height="1px"
+          android:background="#3000"
+          />
+
+      <android.support.v7.widget.AppCompatButton
+          android:id="@+id/btn_complete"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_margin="20dp"
+          android:background="@drawable/btn_bkg_blue_rect_round"
+          android:text="完成"
+          android:textColor="@android:color/holo_blue_dark"
+          tools:ignore="HardcodedText"
+          />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+  </android.support.v4.widget.NestedScrollView>
+
+</android.support.constraint.ConstraintLayout>

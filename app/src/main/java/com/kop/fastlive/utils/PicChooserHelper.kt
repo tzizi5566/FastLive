@@ -193,6 +193,7 @@ class PicChooserHelper(activity: Activity) {
     val cursor = mActivity.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
         arrayOf(MediaStore.Images.Media._ID), MediaStore.Images.Media.DATA + "=? ",
         arrayOf(filePath), null)
+    cursor.close()
 
     return if (cursor != null && cursor.moveToFirst()) {
       val id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID))

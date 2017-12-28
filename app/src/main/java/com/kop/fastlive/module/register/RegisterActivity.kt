@@ -58,7 +58,7 @@ class RegisterActivity : AppCompatActivity() {
   private fun registerActurally(userName: String, password: String) {
     ILiveLoginManager.getInstance().tlsRegister(userName, password, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any?) {
-        Toast.makeText(this@RegisterActivity, "创建用户成功！请登录！", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@RegisterActivity, "创建用户成功！", Toast.LENGTH_SHORT).show()
         login()
       }
 
@@ -89,6 +89,7 @@ class RegisterActivity : AppCompatActivity() {
         Toast.makeText(this@RegisterActivity, "登录成功！", Toast.LENGTH_SHORT).show()
         getSelfProfile()
         startActivity(Intent(this@RegisterActivity, EditProfileActivity::class.java))
+        finish()
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {

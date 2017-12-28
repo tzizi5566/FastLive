@@ -3,15 +3,12 @@ package com.kop.fastlive.module.login
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.Toast
-import com.kop.fastlive.MyApplication
+import com.blankj.utilcode.util.SPUtils
 import com.kop.fastlive.R
 import com.kop.fastlive.module.editprofile.EditProfileActivity
+import com.kop.fastlive.module.main.MainActivity
 import com.kop.fastlive.module.register.RegisterActivity
-import com.tencent.TIMFriendshipManager
-import com.tencent.TIMUserProfile
-import com.tencent.TIMValueCallBack
 import com.tencent.ilivesdk.ILiveCallBack
 import com.tencent.ilivesdk.core.ILiveLoginManager
 import kotlinx.android.synthetic.main.activity_login.btn_login
@@ -65,29 +62,19 @@ class LoginActivity : AppCompatActivity() {
     ILiveLoginManager.getInstance().iLiveLogin(userName, password, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any?) {
         Toast.makeText(this@LoginActivity, "登录成功！", Toast.LENGTH_SHORT).show()
-//        getSelfProfile()
-        startActivity(Intent(this@LoginActivity, EditProfileActivity::class.java))
+        val spUtils = SPUtils.getInstance("FirstLogin")
+        val isFirst = spUtils.getBoolean("firstLogin", true)
+        if (isFirst) {
+          startActivity(Intent(this@LoginActivity, EditProfileActivity::class.java))
+        } else {
+          startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+        }
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {
         Toast.makeText(this@LoginActivity, "登录失败！$errMsg", Toast.LENGTH_SHORT).show()
       }
 
-    })
-  }
-
-  private fun getSelfProfile() {
-    TIMFriendshipManager.getInstance().getSelfProfile(object : TIMValueCallBack<TIMUserProfile> {
-      override fun onSuccess(p0: TIMUserProfile?) {
-        p0?.let {
-          (application as MyApplication).setSelfProfile(p0)
-        }
-      }
-
-      override fun onError(p0: Int, p1: String?) {
-        Log.i("KOP", "$p0 --> $p1")
-        Toast.makeText(this@LoginActivity, "获取个人信息失败！$p1", Toast.LENGTH_SHORT).show()
-      }
     })
   }
 }

@@ -1,6 +1,7 @@
 package com.kop.fastlive
 
 import android.app.Application
+import com.blankj.utilcode.util.Utils
 import com.kop.fastlive.module.editprofile.CustomProfile
 import com.kop.fastlive.utils.QnUploadHelper
 import com.tencent.TIMManager
@@ -22,6 +23,7 @@ class MyApplication : Application() {
     super.onCreate()
     initLiveSdk()
     initQiNiu()
+    Utils.init(this)
   }
 
   private fun initLiveSdk() {
