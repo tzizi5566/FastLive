@@ -1,4 +1,4 @@
-package com.kop.fastlive.utils
+package com.kop.fastlive.utils.picchoose
 
 import android.app.Activity
 import android.content.ContentValues
@@ -9,6 +9,10 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.kop.fastlive.MyApplication
+import com.kop.fastlive.utils.QnUploadHelper
+import com.kop.fastlive.utils.QnUploadHelper.UploadCallBack
+import com.kop.fastlive.utils.picchoose.PicChooserType.AVATAR
+import com.kop.fastlive.utils.picchoose.PicChooserType.COVER
 import com.kop.fastlive.widget.PicChooseDialog
 import com.kop.fastlive.widget.PicChooseDialog.OnDialogClickListener
 import com.qiniu.android.http.ResponseInfo
@@ -19,7 +23,7 @@ import java.io.File
  * 创 建 人: KOP
  * 创建日期: 2017/12/25 13:59
  */
-class PicChooserHelper(activity: Activity) {
+class PicChooserHelper(activity: Activity, picType: PicChooserType = AVATAR) {
 
   interface OnChooseResultListener {
     fun onSuccess(url: String)
@@ -40,6 +44,8 @@ class PicChooserHelper(activity: Activity) {
 
   private var mCameraUri: Uri? = null
   private var mCropUri: Uri? = null
+
+  private var mPicType = picType
 
   fun showDialog() {
     val dialog = PicChooseDialog(mActivity)
@@ -101,16 +107,17 @@ class PicChooserHelper(activity: Activity) {
 
   private fun upload2QiNiu(path: String?) {
     val file = File(path)
-    QnUploadHelper.uploadPic(path!!, file.name, object : QnUploadHelper.UploadCallBack {
-      override fun success(url: String) {
-        mOnChooserResultListener?.onSuccess(url)
-      }
+    QnUploadHelper.uploadPic(path!!, file.name,
+        object : UploadCallBack {
+          override fun success(url: String) {
+            mOnChooserResultListener?.onSuccess(url)
+          }
 
-      override fun fail(key: String, info: ResponseInfo) {
-        mOnChooserResultListener?.onFail(info.error)
-      }
+          override fun fail(key: String, info: ResponseInfo) {
+            mOnChooserResultListener?.onFail(info.error)
+          }
 
-    })
+        })
   }
 
   private fun startCrop(uri: Uri?) {
@@ -120,10 +127,17 @@ class PicChooserHelper(activity: Activity) {
     intent.putExtra("return-data", false)
     intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString())
 
-    intent.putExtra("aspectX", 300)
-    intent.putExtra("aspectY", 300)
-    intent.putExtra("outputX", 300)
-    intent.putExtra("outputY", 300)
+    if (mPicType == AVATAR) {
+      intent.putExtra("aspectX", 300)
+      intent.putExtra("aspectY", 300)
+      intent.putExtra("outputX", 300)
+      intent.putExtra("outputY", 300)
+    } else if (mPicType == COVER) {
+      intent.putExtra("aspectX", 500)
+      intent.putExtra("aspectY", 300)
+      intent.putExtra("outputX", 500)
+      intent.putExtra("outputY", 300)
+    }
 
     intent.putExtra(MediaStore.EXTRA_OUTPUT, mCropUri)
 
@@ -172,9 +186,9 @@ class PicChooserHelper(activity: Activity) {
     }
     val selfProfile = (mActivity.application as MyApplication).getSelfProfile()
     val fileName = if (selfProfile != null) {
-      System.currentTimeMillis().toString() + selfProfile.identifier + "_avatar_crop.jpg"
+      System.currentTimeMillis().toString() + selfProfile.identifier + "_crop.jpg"
     } else {
-      System.currentTimeMillis().toString() + "_avatar_crop.jpg"
+      System.currentTimeMillis().toString() + "_crop.jpg"
     }
 
     val jpgFile = File(dir, fileName)

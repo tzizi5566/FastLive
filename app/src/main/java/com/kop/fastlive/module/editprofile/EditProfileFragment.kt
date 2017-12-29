@@ -64,7 +64,7 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
 
     CallbackManager
         .getInstance()
-        .addCallback(CallbackType.CHOOSE_PIC, object : IGlobalCallback<Any> {
+        .addCallback(CallbackType.CHOOSE_PIC_AVATAR, object : IGlobalCallback<Any> {
           override fun executeCallback(args: Any) {
             updateAvatar(args.toString())
           }

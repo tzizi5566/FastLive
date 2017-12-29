@@ -9,7 +9,7 @@
     tools:context=".module.editprofile.EditProfileActivity"
     >
 
-  <FrameLayout
+  <android.support.v7.widget.ContentFrameLayout
       android:id="@+id/fl"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

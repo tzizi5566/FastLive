@@ -1,6 +1,7 @@
 package com.kop.fastlive
 
 import android.app.Application
+import com.avos.avoscloud.AVOSCloud
 import com.blankj.utilcode.util.Utils
 import com.kop.fastlive.module.editprofile.CustomProfile
 import com.kop.fastlive.utils.QnUploadHelper
@@ -24,6 +25,8 @@ class MyApplication : Application() {
     initLiveSdk()
     initQiNiu()
     Utils.init(this)
+    AVOSCloud.initialize(this,"uPBMJAiFABWdpGJB5qtP4Twe-9Nh9j0Va","vQVVIgU4jWA9gWkWmiuAhfGV")
+    AVOSCloud.setDebugLogEnabled(true)
   }
 
   private fun initLiveSdk() {

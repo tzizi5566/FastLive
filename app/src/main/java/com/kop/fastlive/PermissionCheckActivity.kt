@@ -7,9 +7,12 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import com.kop.fastlive.utils.PicChooserHelper
+import com.kop.fastlive.utils.picchoose.PicChooserHelper
 import com.kop.fastlive.utils.callblack.CallbackManager
 import com.kop.fastlive.utils.callblack.CallbackType
+import com.kop.fastlive.utils.picchoose.PicChooserType
+import com.kop.fastlive.utils.picchoose.PicChooserType.AVATAR
+import com.kop.fastlive.utils.picchoose.PicChooserType.COVER
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnNeverAskAgain
 import permissions.dispatcher.OnPermissionDenied
@@ -24,13 +27,17 @@ import permissions.dispatcher.RuntimePermissions
  */
 @SuppressLint("Registered")
 @RuntimePermissions
-open class PermissionCheckActivity : AppCompatActivity() {
+abstract class PermissionCheckActivity : AppCompatActivity() {
 
+  private var mPicType: PicChooserType? = null
   private var mPicChooseHelp: PicChooserHelper? = null
+
+  abstract fun setPicType(): PicChooserType
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    mPicChooseHelp = PicChooserHelper(this)
+    mPicType = setPicType()
+    mPicChooseHelp = PicChooserHelper(this, mPicType!!)
   }
 
   @NeedsPermission(
@@ -40,8 +47,13 @@ open class PermissionCheckActivity : AppCompatActivity() {
   fun choosePic() {
     mPicChooseHelp?.setOnChooseResultListener(object : PicChooserHelper.OnChooseResultListener {
       override fun onSuccess(url: String) {
-        val callback = CallbackManager.getInstance().getCallback(CallbackType.CHOOSE_PIC)
-        callback?.executeCallback(url)
+        if (mPicType == AVATAR) {
+          val callback = CallbackManager.getInstance().getCallback(CallbackType.CHOOSE_PIC_AVATAR)
+          callback?.executeCallback(url)
+        } else if (mPicType == COVER) {
+          val callback = CallbackManager.getInstance().getCallback(CallbackType.CHOOSE_PIC_COVER)
+          callback?.executeCallback(url)
+        }
       }
 
       override fun onFail(msg: String) {

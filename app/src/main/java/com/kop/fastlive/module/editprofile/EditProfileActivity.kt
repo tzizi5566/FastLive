@@ -3,6 +3,7 @@ package com.kop.fastlive.module.editprofile
 import android.os.Bundle
 import com.kop.fastlive.PermissionCheckActivity
 import com.kop.fastlive.R
+import com.kop.fastlive.utils.picchoose.PicChooserType
 
 class EditProfileActivity : PermissionCheckActivity() {
 
@@ -19,5 +20,9 @@ class EditProfileActivity : PermissionCheckActivity() {
               EditProfileFragment::class.java.simpleName)
           .commit()
     }
+  }
+
+  override fun setPicType(): PicChooserType {
+    return PicChooserType.AVATAR
   }
 }

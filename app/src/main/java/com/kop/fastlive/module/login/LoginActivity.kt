@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_login.btn_register
 import kotlinx.android.synthetic.main.activity_login.edt_password
 import kotlinx.android.synthetic.main.activity_login.edt_user_name
 
+
 class LoginActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
