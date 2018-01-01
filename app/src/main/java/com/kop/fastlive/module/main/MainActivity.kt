@@ -10,6 +10,7 @@ import com.kop.fastlive.module.createlive.CreateLiveActivity
 import com.kop.fastlive.module.editprofile.EditProfileFragment
 import com.kop.fastlive.module.livelist.LiveListFragment
 import com.kop.fastlive.utils.picchoose.PicChooserType
+import kotlinx.android.synthetic.main.activity_main.iv_create_live
 import kotlinx.android.synthetic.main.activity_main.tabhost
 import kotlinx.android.synthetic.main.view_indicator.view.tab_icon
 
@@ -37,7 +38,7 @@ class MainActivity : PermissionCheckActivity() {
 
     val live = tabhost
         .newTabSpec(LiveListFragment::class.java.simpleName)
-        .setIndicator(getIndicatorView(R.drawable.tab_publish_live))
+        .setIndicator(getIndicatorView(0))
     tabhost.addTab(live, LiveListFragment::class.java, null)
 
     val profile = tabhost
@@ -46,6 +47,11 @@ class MainActivity : PermissionCheckActivity() {
     tabhost.addTab(profile, EditProfileFragment::class.java, null)
 
     tabhost.tabWidget.getChildTabViewAt(1).setOnClickListener({
+      //跳转到创建直播的页面。
+      startActivity(Intent(this@MainActivity, CreateLiveActivity::class.java))
+    })
+
+    iv_create_live.setOnClickListener({
       //跳转到创建直播的页面。
       startActivity(Intent(this@MainActivity, CreateLiveActivity::class.java))
     })

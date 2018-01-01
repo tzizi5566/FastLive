@@ -1,6 +1,7 @@
 package com.kop.fastlive.module.editprofile
 
 import android.os.Bundle
+import com.blankj.utilcode.util.FragmentUtils
 import com.kop.fastlive.PermissionCheckActivity
 import com.kop.fastlive.R
 import com.kop.fastlive.utils.picchoose.PicChooserType
@@ -11,14 +12,15 @@ class EditProfileActivity : PermissionCheckActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_edit_profile)
 
-    val fragment = supportFragmentManager.findFragmentByTag(
-        EditProfileFragment::class.java.simpleName)
+    val fragment = FragmentUtils.findFragment(
+        supportFragmentManager,
+        EditProfileFragment::class.java)
+
     if (fragment == null) {
-      supportFragmentManager
-          .beginTransaction()
-          .add(R.id.fl, EditProfileFragment.newInstance(),
-              EditProfileFragment::class.java.simpleName)
-          .commit()
+      FragmentUtils.add(
+          supportFragmentManager,
+          EditProfileFragment.newInstance(),
+          R.id.fl)
     }
   }
 

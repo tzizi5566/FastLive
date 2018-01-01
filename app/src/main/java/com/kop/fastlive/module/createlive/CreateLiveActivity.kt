@@ -1,16 +1,24 @@
 package com.kop.fastlive.module.createlive
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.view.View.OnClickListener
+import android.widget.Toast
+import com.avos.avoscloud.AVException
+import com.avos.avoscloud.AVObject
+import com.avos.avoscloud.SaveCallback
+import com.kop.fastlive.MyApplication
 import com.kop.fastlive.PermissionCheckActivity
 import com.kop.fastlive.R
 import com.kop.fastlive.choosePicWithPermissionCheck
 import com.kop.fastlive.utils.ImgUtil
+import com.kop.fastlive.utils.NumUtil
 import com.kop.fastlive.utils.callblack.CallbackManager
 import com.kop.fastlive.utils.callblack.CallbackType
 import com.kop.fastlive.utils.callblack.IGlobalCallback
 import com.kop.fastlive.utils.picchoose.PicChooserType
+import kotlinx.android.synthetic.main.activity_create_live.edt_title
 import kotlinx.android.synthetic.main.activity_create_live.fl_set_cover
 import kotlinx.android.synthetic.main.activity_create_live.iv_cover
 import kotlinx.android.synthetic.main.activity_create_live.tv_create
@@ -50,8 +58,38 @@ class CreateLiveActivity : PermissionCheckActivity(), OnClickListener {
       }
 
       R.id.tv_create -> {
-
+        createRoom()
       }
+    }
+  }
+
+  private fun createRoom() {
+    val selfProfile = (application as MyApplication).getSelfProfile()
+    selfProfile?.let {
+      val roomId = NumUtil.getRandomNum()
+      val userId = selfProfile.identifier
+      val userAvatar = selfProfile.faceUrl
+      val nickName = selfProfile.nickName
+      val userName = if (TextUtils.isEmpty(nickName)) selfProfile.identifier else nickName
+      val liveCover = mCoverUrl
+      val liveTitle = edt_title.text.toString()
+
+      val avObject = AVObject("RoomInfo")
+      avObject.put("room_id", roomId)
+      avObject.put("user_id", userId)
+      avObject.put("user_avatar", userAvatar)
+      avObject.put("user_name", userName)
+      avObject.put("live_cover", liveCover)
+      avObject.put("live_title", liveTitle)
+      avObject.saveInBackground(object : SaveCallback() {
+        override fun done(p0: AVException?) {
+          if (p0 == null) {
+            Toast.makeText(this@CreateLiveActivity, "创建成功！", Toast.LENGTH_SHORT).show()
+          } else {
+            Toast.makeText(this@CreateLiveActivity, p0.message, Toast.LENGTH_SHORT).show()
+          }
+        }
+      })
     }
   }
 

@@ -30,6 +30,7 @@ class MyApplication : Application() {
   }
 
   private fun initLiveSdk() {
+    TIMManager.getInstance().disableCrashReport()
     ILiveSDK.getInstance().initSdk(this, 1400054333, 20062)
 
     val custom = arrayListOf<String>()

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/tb_titlebar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/colorPrimaryDark"
+      android:gravity="center"
+      app:contentInsetStart="0dp"
+      >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="热播列表"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        tools:ignore="HardcodedText"
+        />
+
+  </android.support.v7.widget.Toolbar>
+
+  <android.support.v4.widget.SwipeRefreshLayout
+      android:id="@+id/sr_layout"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/tb_titlebar"
+      >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+  </android.support.v4.widget.SwipeRefreshLayout>
+
+</android.support.constraint.ConstraintLayout>

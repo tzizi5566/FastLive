@@ -1,37 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.app.FragmentTabHost
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@android:id/tabhost"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.kop.fastlive.module.main.MainActivity"
     >
 
-  <android.support.constraint.ConstraintLayout
+  <android.support.v4.app.FragmentTabHost
+      android:id="@android:id/tabhost"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       >
 
-    <android.support.v7.widget.ContentFrameLayout
-        android:id="@android:id/tabcontent"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@android:id/tabs"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:layout_height="match_parent"
+        >
 
-    <TabWidget
-        android:id="@android:id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@android:id/tabcontent"
-        />
+      <android.support.v7.widget.ContentFrameLayout
+          android:id="@android:id/tabcontent"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          app:layout_constraintBottom_toTopOf="@android:id/tabs"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          />
 
-  </android.support.constraint.ConstraintLayout>
+      <TabWidget
+          android:id="@android:id/tabs"
+          android:layout_width="match_parent"
+          android:layout_height="48dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintTop_toBottomOf="@android:id/tabcontent"
+          />
 
-</android.support.v4.app.FragmentTabHost>
+    </android.support.constraint.ConstraintLayout>
+
+  </android.support.v4.app.FragmentTabHost>
+
+  <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/iv_create_live"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
+      android:layout_marginBottom="6dp"
+      android:src="@drawable/tab_publish_live"
+      />
+
+</RelativeLayout>
