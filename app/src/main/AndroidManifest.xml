@@ -41,6 +41,10 @@
     </activity>
     <activity android:name=".module.createlive.CreateLiveActivity">
     </activity>
+    <activity android:name=".module.hostlive.HostLiveActivity">
+    </activity>
+    <activity android:name=".module.watcher.WatcherLiveActivity">
+    </activity>
   </application>
 
 </manifest>

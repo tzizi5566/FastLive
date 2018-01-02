@@ -1,5 +1,6 @@
 package com.kop.fastlive.module.livelist
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
@@ -13,6 +14,7 @@ import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.FindCallback
 import com.kop.fastlive.R
+import com.kop.fastlive.module.watcher.WatcherLiveActivity
 import kotlinx.android.synthetic.main.fragment_live_list.rv_view
 import kotlinx.android.synthetic.main.fragment_live_list.sr_layout
 
@@ -62,8 +64,11 @@ class LiveListFragment : Fragment() {
     mAdapter = LiveListAdapter(activity, mList)
     rv_view.layoutManager = LinearLayoutManager(activity)
     rv_view.adapter = mAdapter
-    mAdapter?.setOnItemClickListener { view, i ->
-      Toast.makeText(activity, "$i", Toast.LENGTH_SHORT).show()
+    mAdapter?.setOnItemClickListener { _, i ->
+      val intent = Intent(activity, WatcherLiveActivity::class.java)
+      intent.putExtra("roomId", mList[i].getString("room_id"))
+      intent.putExtra("hostId", mList[i].getString("user_id"))
+      startActivity(intent)
     }
   }
 
@@ -74,7 +79,7 @@ class LiveListFragment : Fragment() {
         android.R.color.holo_red_light
     )
 
-    sr_layout.setProgressViewOffset(true, -20, 80)
+    sr_layout.setProgressViewOffset(true, -40, 80)
 
     sr_layout.setOnRefreshListener({
       getLiveListData()

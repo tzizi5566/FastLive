@@ -1,5 +1,6 @@
 package com.kop.fastlive.module.createlive
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -12,6 +13,7 @@ import com.kop.fastlive.MyApplication
 import com.kop.fastlive.PermissionCheckActivity
 import com.kop.fastlive.R
 import com.kop.fastlive.choosePicWithPermissionCheck
+import com.kop.fastlive.module.hostlive.HostLiveActivity
 import com.kop.fastlive.utils.ImgUtil
 import com.kop.fastlive.utils.NumUtil
 import com.kop.fastlive.utils.callblack.CallbackManager
@@ -84,7 +86,12 @@ class CreateLiveActivity : PermissionCheckActivity(), OnClickListener {
       avObject.saveInBackground(object : SaveCallback() {
         override fun done(p0: AVException?) {
           if (p0 == null) {
+            val intent = Intent(this@CreateLiveActivity, HostLiveActivity::class.java)
+            intent.putExtra("roomId", roomId)
+            intent.putExtra("objectId", avObject.objectId)
+            startActivity(intent)
             Toast.makeText(this@CreateLiveActivity, "创建成功！", Toast.LENGTH_SHORT).show()
+            finish()
           } else {
             Toast.makeText(this@CreateLiveActivity, p0.message, Toast.LENGTH_SHORT).show()
           }

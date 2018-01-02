@@ -38,7 +38,7 @@ class LiveListAdapter(context: Context,
   override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
     val avObject = mList[position]
     with(holder as LiveListViewHolder) {
-      val userName = if (avObject.getString("user_name").isEmpty()) {
+      val userName = if (avObject.getString("user_name").isNullOrEmpty()) {
         avObject.getString("user_id")
       } else {
         avObject.getString("user_name")
@@ -46,7 +46,7 @@ class LiveListAdapter(context: Context,
       itemView.tv_name.text = userName
 
       val liveTitle = avObject.getString("live_title")
-      if (liveTitle.isEmpty()) {
+      if (liveTitle.isNullOrEmpty()) {
         val title = "$userName 的直播"
         itemView.tv_title.text = title
       } else {
@@ -54,14 +54,14 @@ class LiveListAdapter(context: Context,
       }
 
       val url = avObject.getString("live_cover")
-      if (url.isEmpty()) {
+      if (url.isNullOrEmpty()) {
         ImgUtil.load(mContext, R.drawable.default_cover, itemView.iv_cover)
       } else {
         ImgUtil.load(mContext, url, itemView.iv_cover)
       }
 
       val avatar = avObject.getString("user_avatar")
-      if (avatar.isEmpty()) {
+      if (avatar.isNullOrEmpty()) {
         ImgUtil.loadRound(mContext, R.drawable.default_avatar, itemView.iv_avatar)
       } else {
         ImgUtil.loadRound(mContext, avatar, itemView.iv_avatar)

@@ -46,11 +46,6 @@ class MainActivity : PermissionCheckActivity() {
         .setIndicator(getIndicatorView(R.drawable.tab_profile))
     tabhost.addTab(profile, EditProfileFragment::class.java, null)
 
-    tabhost.tabWidget.getChildTabViewAt(1).setOnClickListener({
-      //跳转到创建直播的页面。
-      startActivity(Intent(this@MainActivity, CreateLiveActivity::class.java))
-    })
-
     iv_create_live.setOnClickListener({
       //跳转到创建直播的页面。
       startActivity(Intent(this@MainActivity, CreateLiveActivity::class.java))
