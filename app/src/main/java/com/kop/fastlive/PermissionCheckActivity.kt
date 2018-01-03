@@ -64,8 +64,17 @@ abstract class PermissionCheckActivity : AppCompatActivity() {
     mPicChooseHelp?.showDialog()
   }
 
+  @NeedsPermission(
+      Manifest.permission.CAMERA,
+      Manifest.permission.RECORD_AUDIO)
+  fun createRoom() {
+    val callback = CallbackManager.getInstance().getCallback(CallbackType.CREATE_ROOM)
+    callback?.executeCallback("")
+  }
+
   @OnShowRationale(
       Manifest.permission.CAMERA,
+      Manifest.permission.RECORD_AUDIO,
       Manifest.permission.READ_EXTERNAL_STORAGE,
       Manifest.permission.WRITE_EXTERNAL_STORAGE)
   fun onCameraRationale(request: PermissionRequest) {
@@ -74,6 +83,7 @@ abstract class PermissionCheckActivity : AppCompatActivity() {
 
   @OnPermissionDenied(
       Manifest.permission.CAMERA,
+      Manifest.permission.RECORD_AUDIO,
       Manifest.permission.READ_EXTERNAL_STORAGE,
       Manifest.permission.WRITE_EXTERNAL_STORAGE)
   fun onCameraDenied() {
@@ -82,6 +92,7 @@ abstract class PermissionCheckActivity : AppCompatActivity() {
 
   @OnNeverAskAgain(
       Manifest.permission.CAMERA,
+      Manifest.permission.RECORD_AUDIO,
       Manifest.permission.READ_EXTERNAL_STORAGE,
       Manifest.permission.WRITE_EXTERNAL_STORAGE)
   fun onCameraNever() {

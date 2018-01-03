@@ -13,6 +13,7 @@ import com.kop.fastlive.MyApplication
 import com.kop.fastlive.PermissionCheckActivity
 import com.kop.fastlive.R
 import com.kop.fastlive.choosePicWithPermissionCheck
+import com.kop.fastlive.createRoomWithPermissionCheck
 import com.kop.fastlive.module.hostlive.HostLiveActivity
 import com.kop.fastlive.utils.ImgUtil
 import com.kop.fastlive.utils.NumUtil
@@ -35,6 +36,7 @@ class CreateLiveActivity : PermissionCheckActivity(), OnClickListener {
     setContentView(R.layout.activity_create_live)
 
     registerListener()
+    registerCreateRoom()
   }
 
   override fun setPicType(): PicChooserType {
@@ -60,44 +62,49 @@ class CreateLiveActivity : PermissionCheckActivity(), OnClickListener {
       }
 
       R.id.tv_create -> {
-        createRoom()
+        createRoomWithPermissionCheck()
       }
     }
   }
 
-  private fun createRoom() {
-    val selfProfile = (application as MyApplication).getSelfProfile()
-    selfProfile?.let {
-      val roomId = NumUtil.getRandomNum()
-      val userId = selfProfile.identifier
-      val userAvatar = selfProfile.faceUrl
-      val nickName = selfProfile.nickName
-      val userName = if (TextUtils.isEmpty(nickName)) selfProfile.identifier else nickName
-      val liveCover = mCoverUrl
-      val liveTitle = edt_title.text.toString()
+  private fun registerCreateRoom() {
+    CallbackManager.getInstance().addCallback(CallbackType.CREATE_ROOM,
+        object : IGlobalCallback<Any> {
+          override fun executeCallback(args: Any) {
+            val selfProfile = (application as MyApplication).getSelfProfile()
+            selfProfile?.let {
+              val roomId = NumUtil.getRandomNum()
+              val userId = selfProfile.identifier
+              val userAvatar = selfProfile.faceUrl
+              val nickName = selfProfile.nickName
+              val userName = if (TextUtils.isEmpty(nickName)) selfProfile.identifier else nickName
+              val liveCover = mCoverUrl
+              val liveTitle = edt_title.text.toString()
 
-      val avObject = AVObject("RoomInfo")
-      avObject.put("room_id", roomId)
-      avObject.put("user_id", userId)
-      avObject.put("user_avatar", userAvatar)
-      avObject.put("user_name", userName)
-      avObject.put("live_cover", liveCover)
-      avObject.put("live_title", liveTitle)
-      avObject.saveInBackground(object : SaveCallback() {
-        override fun done(p0: AVException?) {
-          if (p0 == null) {
-            val intent = Intent(this@CreateLiveActivity, HostLiveActivity::class.java)
-            intent.putExtra("roomId", roomId)
-            intent.putExtra("objectId", avObject.objectId)
-            startActivity(intent)
-            Toast.makeText(this@CreateLiveActivity, "创建成功！", Toast.LENGTH_SHORT).show()
-            finish()
-          } else {
-            Toast.makeText(this@CreateLiveActivity, p0.message, Toast.LENGTH_SHORT).show()
+              val avObject = AVObject("RoomInfo")
+              avObject.put("room_id", roomId)
+              avObject.put("user_id", userId)
+              avObject.put("user_avatar", userAvatar)
+              avObject.put("user_name", userName)
+              avObject.put("live_cover", liveCover)
+              avObject.put("live_title", liveTitle)
+              avObject.saveInBackground(object : SaveCallback() {
+                override fun done(p0: AVException?) {
+                  if (p0 == null) {
+                    val intent = Intent(this@CreateLiveActivity, HostLiveActivity::class.java)
+                    intent.putExtra("roomId", roomId)
+                    intent.putExtra("objectId", avObject.objectId)
+                    startActivity(intent)
+                    Toast.makeText(this@CreateLiveActivity, "创建成功！", Toast.LENGTH_SHORT).show()
+                    finish()
+                  } else {
+                    Toast.makeText(this@CreateLiveActivity, p0.message, Toast.LENGTH_SHORT).show()
+                  }
+                }
+              })
+            }
           }
-        }
-      })
-    }
+        })
   }
 
   private fun updateCover(url: String) {

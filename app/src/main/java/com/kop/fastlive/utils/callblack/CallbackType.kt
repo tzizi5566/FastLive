@@ -9,4 +9,5 @@ enum class CallbackType {
 
   CHOOSE_PIC_AVATAR,
   CHOOSE_PIC_COVER,
+  CREATE_ROOM
 }

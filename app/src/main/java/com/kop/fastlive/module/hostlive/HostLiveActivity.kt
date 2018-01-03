@@ -2,22 +2,29 @@ package com.kop.fastlive.module.hostlive
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import com.avos.avoscloud.AVCloudQueryResult
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.CloudQueryCallback
+import com.blankj.utilcode.util.KeyboardUtils
 import com.kop.fastlive.R
+import com.kop.fastlive.widget.BottomControlView
+import com.kop.fastlive.widget.ChatView
 import com.tencent.av.sdk.AVRoomMulti
 import com.tencent.ilivesdk.ILiveCallBack
 import com.tencent.ilivesdk.ILiveConstants
 import com.tencent.ilivesdk.core.ILiveLoginManager
 import com.tencent.livesdk.ILVLiveManager
 import com.tencent.livesdk.ILVLiveRoomOption
+import kotlinx.android.synthetic.main.activity_host_live.bottom_control_view
+import kotlinx.android.synthetic.main.activity_host_live.chat_view
 import kotlinx.android.synthetic.main.activity_host_live.live_view
 
 
-class HostLiveActivity : AppCompatActivity() {
+class HostLiveActivity : AppCompatActivity(), BottomControlView.OnControlListener,
+    ChatView.OnChatSendListener, KeyboardUtils.OnSoftInputChangedListener {
 
   private var mRoomId: Int = -1
 
@@ -25,6 +32,7 @@ class HostLiveActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_host_live)
 
+    registerListener()
     live_view.setAutoOrientation(false)
     ILVLiveManager.getInstance().setAvVideoView(live_view)
     createRoom()
@@ -45,11 +53,10 @@ class HostLiveActivity : AppCompatActivity() {
     //创建房间
     ILVLiveManager.getInstance().createRoom(mRoomId, hostOption, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any) {
-        Toast.makeText(this@HostLiveActivity, "create room  ok", Toast.LENGTH_SHORT).show()
+
       }
 
       override fun onError(module: String, errCode: Int, errMsg: String) {
-        quitRoom()
         finish()
       }
     })
@@ -75,6 +82,33 @@ class HostLiveActivity : AppCompatActivity() {
 
       }
     })
+  }
+
+  private fun registerListener() {
+    bottom_control_view.setOnControlListener(this)
+    chat_view.setOnChatSendListener(this)
+    KeyboardUtils.registerSoftInputChangedListener(this, this)
+  }
+
+  override fun onSoftInputChanged(height: Int) {
+    if (height < 0) {
+      bottom_control_view.visibility = View.VISIBLE
+      chat_view.visibility = View.GONE
+    }
+  }
+
+  override fun onChatClick() {
+    bottom_control_view.visibility = View.GONE
+    chat_view.visibility = View.VISIBLE
+    chat_view.setFocusable(this)
+  }
+
+  override fun onCloseClick() {
+    finish()
+  }
+
+  override fun onChatSend(msg: String) {
+
   }
 
   override fun onResume() {

@@ -14,4 +14,19 @@
       android:layout_height="match_parent"
       />
 
+  <com.kop.fastlive.widget.BottomControlView
+      android:id="@+id/bottom_control_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="parent"
+      />
+
+  <com.kop.fastlive.widget.ChatView
+      android:id="@+id/chat_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      app:layout_constraintBottom_toBottomOf="parent"
+      />
+
 </android.support.constraint.ConstraintLayout>
