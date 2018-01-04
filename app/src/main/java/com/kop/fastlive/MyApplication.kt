@@ -18,6 +18,7 @@ import com.tencent.livesdk.ILVLiveManager
  */
 class MyApplication : Application() {
 
+  private val mLiveConfig = ILVLiveConfig()
   private var mSelfProfile: TIMUserProfile? = null
 
   override fun onCreate() {
@@ -25,7 +26,7 @@ class MyApplication : Application() {
     initLiveSdk()
     initQiNiu()
     Utils.init(this)
-    AVOSCloud.initialize(this,"uPBMJAiFABWdpGJB5qtP4Twe-9Nh9j0Va","vQVVIgU4jWA9gWkWmiuAhfGV")
+    AVOSCloud.initialize(this, "uPBMJAiFABWdpGJB5qtP4Twe-9Nh9j0Va", "vQVVIgU4jWA9gWkWmiuAhfGV")
     AVOSCloud.setDebugLogEnabled(true)
   }
 
@@ -40,7 +41,7 @@ class MyApplication : Application() {
     custom.add(CustomProfile.CUSTOM_RENZHENG)
     TIMManager.getInstance().initFriendshipSettings(CustomProfile.allBaseInfo, custom)
 
-    ILVLiveManager.getInstance().init(ILVLiveConfig())
+    ILVLiveManager.getInstance().init(mLiveConfig)
   }
 
   private fun initQiNiu() {
@@ -51,11 +52,15 @@ class MyApplication : Application() {
         "tzizi5566")
   }
 
-  fun setSelfProfile(userProfile: TIMUserProfile) {
+  fun setUserProfile(userProfile: TIMUserProfile) {
     mSelfProfile = userProfile
   }
 
-  fun getSelfProfile(): TIMUserProfile? {
+  fun getUserProfile(): TIMUserProfile? {
     return mSelfProfile
+  }
+
+  fun getLiveConfig(): ILVLiveConfig {
+    return mLiveConfig
   }
 }

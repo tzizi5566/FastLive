@@ -59,6 +59,7 @@ class ChatView : LinearLayoutCompat, OnClickListener, OnCheckedChangeListener {
   private fun sendChatMsg() {
     mOnChatSendListener?.let {
       mOnChatSendListener!!.onChatSend(edt_chat.text.toString())
+      edt_chat.text.clear()
     }
   }
 

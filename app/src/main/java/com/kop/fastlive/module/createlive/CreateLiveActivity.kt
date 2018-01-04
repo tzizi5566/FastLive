@@ -71,7 +71,7 @@ class CreateLiveActivity : PermissionCheckActivity(), OnClickListener {
     CallbackManager.getInstance().addCallback(CallbackType.CREATE_ROOM,
         object : IGlobalCallback<Any> {
           override fun executeCallback(args: Any) {
-            val selfProfile = (application as MyApplication).getSelfProfile()
+            val selfProfile = (application as MyApplication).getUserProfile()
             selfProfile?.let {
               val roomId = NumUtil.getRandomNum()
               val userId = selfProfile.identifier

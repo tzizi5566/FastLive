@@ -2,15 +2,34 @@ package com.kop.fastlive.module.watcher
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
+import com.blankj.utilcode.util.KeyboardUtils
+import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
+import com.kop.fastlive.model.ChatMsgInfo
+import com.kop.fastlive.widget.BottomControlView
+import com.kop.fastlive.widget.ChatView
+import com.tencent.TIMMessage
+import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
 import com.tencent.ilivesdk.ILiveCallBack
+import com.tencent.ilivesdk.core.ILiveRoomManager
+import com.tencent.livesdk.ILVCustomCmd
+import com.tencent.livesdk.ILVLiveConfig
 import com.tencent.livesdk.ILVLiveManager
 import com.tencent.livesdk.ILVLiveRoomOption
+import com.tencent.livesdk.ILVText
+import kotlinx.android.synthetic.main.activity_watcher_live.bottom_control_view
+import kotlinx.android.synthetic.main.activity_watcher_live.chat_view
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
+import kotlinx.android.synthetic.main.activity_watcher_live.msg_list
 
-class WatcherLiveActivity : AppCompatActivity() {
+class WatcherLiveActivity : AppCompatActivity(),
+    BottomControlView.OnControlListener,
+    ChatView.OnChatSendListener,
+    KeyboardUtils.OnSoftInputChangedListener,
+    ILVLiveConfig.ILVLiveMsgListener {
 
   private var mRoomId: Int = -1
   private var mHostId: String? = null
@@ -19,9 +38,17 @@ class WatcherLiveActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_watcher_live)
 
+    registerListener()
     live_view.setAutoOrientation(false)
     ILVLiveManager.getInstance().setAvVideoView(live_view)
     joinRoom()
+  }
+
+  private fun registerListener() {
+    bottom_control_view.setOnControlListener(this)
+    chat_view.setOnChatSendListener(this)
+    KeyboardUtils.registerSoftInputChangedListener(this, this)
+    (application as MyApplication).getLiveConfig().liveMsgListener = this
   }
 
   private fun joinRoom() {
@@ -62,6 +89,63 @@ class WatcherLiveActivity : AppCompatActivity() {
 
       }
     })
+  }
+
+  private fun sendMsg(msg: String) {
+    val ilvText = ILVText<ILVCustomCmd>(
+        ILVText.ILVTextType.eGroupMsg,
+        ILiveRoomManager.getInstance().imGroupId,
+        msg)
+    ILVLiveManager.getInstance().sendText(ilvText, object : ILiveCallBack<TIMMessage> {
+      override fun onSuccess(data: TIMMessage?) {
+        val userProfile = (application as MyApplication).getUserProfile()
+        userProfile?.let {
+          val msgInfo = ChatMsgInfo(userProfile.identifier, userProfile.faceUrl, msg)
+          msg_list.addMsgInfos(msgInfo)
+        }
+      }
+
+      override fun onError(module: String?, errCode: Int, errMsg: String?) {
+        Toast.makeText(this@WatcherLiveActivity, "发送消息失败：$errCode !", Toast.LENGTH_SHORT).show()
+      }
+    })
+  }
+
+  override fun onSoftInputChanged(height: Int) {
+    if (height < 0) {
+      bottom_control_view.visibility = View.VISIBLE
+      chat_view.visibility = View.GONE
+    }
+  }
+
+  override fun onChatClick() {
+    bottom_control_view.visibility = View.GONE
+    chat_view.visibility = View.VISIBLE
+    chat_view.setFocusable(this)
+  }
+
+  override fun onCloseClick() {
+    finish()
+  }
+
+  override fun onChatSend(msg: String) {
+    sendMsg(msg)
+  }
+
+  override fun onNewOtherMsg(message: TIMMessage?) {
+
+  }
+
+  override fun onNewCustomMsg(cmd: ILVCustomCmd?, id: String?, userProfile: TIMUserProfile?) {
+
+  }
+
+  override fun onNewTextMsg(text: ILVText<out ILVText<*>>?, SenderId: String?,
+      userProfile: TIMUserProfile?) {
+    userProfile?.let {
+      val msgInfo = ChatMsgInfo(userProfile.identifier, userProfile.faceUrl, text?.getText() ?: "")
+      msg_list.addMsgInfos(msgInfo)
+    }
   }
 
   override fun onResume() {

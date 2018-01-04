@@ -3,7 +3,6 @@ package com.kop.fastlive.module.livelist
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_live_list.sr_layout
  */
 class LiveListFragment : Fragment() {
 
-  private var mList = listOf<AVObject>()
+  private var mList = mutableListOf<AVObject>()
   private var mAdapter: LiveListAdapter? = null
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -48,10 +47,8 @@ class LiveListFragment : Fragment() {
     avQuery.findInBackground(object : FindCallback<AVObject>() {
       override fun done(p0: MutableList<AVObject>?, p1: AVException?) {
         if (p1 == null) {
-          val diff = DiffUtil.calculateDiff(DiffCallBack(mList, p0!!))
-          diff.dispatchUpdatesTo(mAdapter)
-          mList = p0
-          mAdapter?.setData(mList)
+          mAdapter?.setData(p0!!)
+          mList = p0!!
         } else {
           Toast.makeText(activity, "获取数据失败 ${p1.message}", Toast.LENGTH_SHORT).show()
         }
@@ -61,7 +58,7 @@ class LiveListFragment : Fragment() {
   }
 
   private fun setAdapter() {
-    mAdapter = LiveListAdapter(activity, mList)
+    mAdapter = LiveListAdapter(activity)
     rv_view.layoutManager = LinearLayoutManager(activity)
     rv_view.adapter = mAdapter
     mAdapter?.setOnItemClickListener { _, i ->

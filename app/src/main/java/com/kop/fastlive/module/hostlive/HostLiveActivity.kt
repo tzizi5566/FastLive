@@ -9,22 +9,34 @@ import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.CloudQueryCallback
 import com.blankj.utilcode.util.KeyboardUtils
+import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
+import com.kop.fastlive.model.ChatMsgInfo
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
+import com.tencent.TIMMessage
+import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
 import com.tencent.ilivesdk.ILiveCallBack
 import com.tencent.ilivesdk.ILiveConstants
 import com.tencent.ilivesdk.core.ILiveLoginManager
+import com.tencent.ilivesdk.core.ILiveRoomManager
+import com.tencent.livesdk.ILVCustomCmd
+import com.tencent.livesdk.ILVLiveConfig
 import com.tencent.livesdk.ILVLiveManager
 import com.tencent.livesdk.ILVLiveRoomOption
+import com.tencent.livesdk.ILVText
 import kotlinx.android.synthetic.main.activity_host_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_host_live.chat_view
 import kotlinx.android.synthetic.main.activity_host_live.live_view
+import kotlinx.android.synthetic.main.activity_host_live.msg_list
 
 
-class HostLiveActivity : AppCompatActivity(), BottomControlView.OnControlListener,
-    ChatView.OnChatSendListener, KeyboardUtils.OnSoftInputChangedListener {
+class HostLiveActivity : AppCompatActivity(),
+    BottomControlView.OnControlListener,
+    ChatView.OnChatSendListener,
+    KeyboardUtils.OnSoftInputChangedListener,
+    ILVLiveConfig.ILVLiveMsgListener {
 
   private var mRoomId: Int = -1
 
@@ -33,7 +45,6 @@ class HostLiveActivity : AppCompatActivity(), BottomControlView.OnControlListene
     setContentView(R.layout.activity_host_live)
 
     registerListener()
-    live_view.setAutoOrientation(false)
     ILVLiveManager.getInstance().setAvVideoView(live_view)
     createRoom()
   }
@@ -44,6 +55,7 @@ class HostLiveActivity : AppCompatActivity(), BottomControlView.OnControlListene
     //创建房间配置项
     val hostOption = ILVLiveRoomOption(ILiveLoginManager.getInstance().myUserId)
         .controlRole("LiveMaster")//角色设置
+        .autoCamera(true)
         .autoFocus(true)
         .autoMic(true)
         .authBits(AVRoomMulti.AUTH_BITS_DEFAULT)//权限设置
@@ -88,6 +100,27 @@ class HostLiveActivity : AppCompatActivity(), BottomControlView.OnControlListene
     bottom_control_view.setOnControlListener(this)
     chat_view.setOnChatSendListener(this)
     KeyboardUtils.registerSoftInputChangedListener(this, this)
+    (application as MyApplication).getLiveConfig().liveMsgListener = this
+  }
+
+  private fun sendMsg(msg: String) {
+    val ilvText = ILVText<ILVCustomCmd>(
+        ILVText.ILVTextType.eGroupMsg,
+        ILiveRoomManager.getInstance().imGroupId,
+        msg)
+    ILVLiveManager.getInstance().sendText(ilvText, object : ILiveCallBack<TIMMessage>{
+      override fun onSuccess(data: TIMMessage?) {
+        val userProfile = (application as MyApplication).getUserProfile()
+        userProfile?.let {
+          val msgInfo = ChatMsgInfo(userProfile.identifier, userProfile.faceUrl, msg)
+          msg_list.addMsgInfos(msgInfo)
+        }
+      }
+
+      override fun onError(module: String?, errCode: Int, errMsg: String?) {
+        Toast.makeText(this@HostLiveActivity, "发送消息失败：$errCode !", Toast.LENGTH_SHORT).show()
+      }
+    })
   }
 
   override fun onSoftInputChanged(height: Int) {
@@ -108,7 +141,23 @@ class HostLiveActivity : AppCompatActivity(), BottomControlView.OnControlListene
   }
 
   override fun onChatSend(msg: String) {
+    sendMsg(msg)
+  }
 
+  override fun onNewOtherMsg(message: TIMMessage?) {
+
+  }
+
+  override fun onNewCustomMsg(cmd: ILVCustomCmd?, id: String?, userProfile: TIMUserProfile?) {
+
+  }
+
+  override fun onNewTextMsg(text: ILVText<out ILVText<*>>?, SenderId: String?,
+      userProfile: TIMUserProfile?) {
+    userProfile?.let {
+      val msgInfo = ChatMsgInfo(userProfile.identifier, userProfile.faceUrl, text?.getText() ?: "")
+      msg_list.addMsgInfos(msgInfo)
+    }
   }
 
   override fun onResume() {

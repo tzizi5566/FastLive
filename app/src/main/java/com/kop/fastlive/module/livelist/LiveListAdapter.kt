@@ -1,6 +1,7 @@
 package com.kop.fastlive.module.livelist
 
 import android.content.Context
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.LayoutInflater
@@ -20,20 +21,40 @@ import kotlinx.android.synthetic.main.item_live_list.view.tv_title
  * 创 建 人: KOP
  * 创建日期: 2018/1/1 15:46
  */
-class LiveListAdapter(context: Context,
-    list: List<AVObject>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LiveListAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
   private val mContext = context
-  private var mList = list
+  private var mList = mutableListOf<AVObject>()
   private var mListener: ((View, Int) -> Unit)? = null
 
-  fun setData(list: List<AVObject>) {
-    mList = list
+  fun setData(list: MutableList<AVObject>) {
+    if (mList.isEmpty()) {
+      mList = list
+      notifyItemRangeInserted(0, list.size)
+    } else {
+      val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+          return mList[oldItemPosition].getString("objectId") ==
+              list[newItemPosition].getString("objectId")
+        }
+
+        override fun getOldListSize() = mList.size
+
+        override fun getNewListSize() = list.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+          val old = mList[oldItemPosition]
+          val new = list[newItemPosition]
+          return old.getString("room_id") == new.getString("room_id")
+              && old.getString("user_id") == new.getString("user_id")
+        }
+      })
+      mList = list
+      diffResult.dispatchUpdatesTo(this)
+    }
   }
 
-  override fun getItemCount(): Int {
-    return mList.size
-  }
+  override fun getItemCount() = mList.size
 
   override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
     val avObject = mList[position]

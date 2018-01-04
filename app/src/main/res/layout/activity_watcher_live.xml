@@ -14,4 +14,26 @@
       android:layout_height="match_parent"
       />
 
+  <com.kop.fastlive.widget.ChatMsgRecyclerView
+      android:id="@+id/msg_list"
+      android:layout_width="200dp"
+      android:layout_height="200dp"
+      app:layout_constraintBottom_toTopOf="@+id/chat_view"
+      />
+
+  <com.kop.fastlive.widget.BottomControlView
+      android:id="@+id/bottom_control_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="parent"
+      />
+
+  <com.kop.fastlive.widget.ChatView
+      android:id="@+id/chat_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      app:layout_constraintBottom_toBottomOf="parent"
+      />
+
 </android.support.constraint.ConstraintLayout>
