@@ -60,4 +60,6 @@ dependencies {
   compile('cn.leancloud.android:avoscloud-sdk:v3.+')
   //圆角布局
   compile 'com.gcssloop.widget:rclayout:1.4.3@aar'
+  //emoji
+  compile 'io.github.rockerhieu:emojicon:1.4.0'
 }

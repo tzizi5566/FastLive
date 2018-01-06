@@ -4,17 +4,17 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
-import com.blankj.utilcode.util.KeyboardUtils
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.model.ChatMsgInfo
+import com.kop.fastlive.model.Constants
+import com.kop.fastlive.utils.SoftKeyBroadManager
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
 import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
 import com.tencent.ilivesdk.ILiveCallBack
-import com.tencent.ilivesdk.core.ILiveRoomManager
 import com.tencent.livesdk.ILVCustomCmd
 import com.tencent.livesdk.ILVLiveConfig
 import com.tencent.livesdk.ILVLiveManager
@@ -22,13 +22,15 @@ import com.tencent.livesdk.ILVLiveRoomOption
 import com.tencent.livesdk.ILVText
 import kotlinx.android.synthetic.main.activity_watcher_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_watcher_live.chat_view
+import kotlinx.android.synthetic.main.activity_watcher_live.cl_view
+import kotlinx.android.synthetic.main.activity_watcher_live.danmu_view
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
 import kotlinx.android.synthetic.main.activity_watcher_live.msg_list
 
 class WatcherLiveActivity : AppCompatActivity(),
     BottomControlView.OnControlListener,
     ChatView.OnChatSendListener,
-    KeyboardUtils.OnSoftInputChangedListener,
+    SoftKeyBroadManager.SoftKeyboardStateListener,
     ILVLiveConfig.ILVLiveMsgListener {
 
   private var mRoomId: Int = -1
@@ -47,7 +49,8 @@ class WatcherLiveActivity : AppCompatActivity(),
   private fun registerListener() {
     bottom_control_view.setOnControlListener(this)
     chat_view.setOnChatSendListener(this)
-    KeyboardUtils.registerSoftInputChangedListener(this, this)
+    val keyBroadManager = SoftKeyBroadManager(cl_view, false)
+    keyBroadManager.addSoftKeyboardStateListener(this)
     (application as MyApplication).getLiveConfig().liveMsgListener = this
   }
 
@@ -91,17 +94,23 @@ class WatcherLiveActivity : AppCompatActivity(),
     })
   }
 
-  private fun sendMsg(msg: String) {
-    val ilvText = ILVText<ILVCustomCmd>(
-        ILVText.ILVTextType.eGroupMsg,
-        ILiveRoomManager.getInstance().imGroupId,
-        msg)
-    ILVLiveManager.getInstance().sendText(ilvText, object : ILiveCallBack<TIMMessage> {
+  private fun sendMsg(cmd: ILVCustomCmd) {
+    ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
       override fun onSuccess(data: TIMMessage?) {
         val userProfile = (application as MyApplication).getUserProfile()
         userProfile?.let {
-          val msgInfo = ChatMsgInfo(userProfile.identifier, userProfile.faceUrl, msg)
-          msg_list.addMsgInfos(msgInfo)
+          val msgInfo = ChatMsgInfo(
+              userProfile.identifier,
+              userProfile.faceUrl,
+              cmd.param ?: "",
+              userProfile.nickName)
+
+          if (cmd.cmd == Constants.CMD_CHAT_MSG_LIST) {
+            msg_list.addMsgInfos(msgInfo)
+          } else if (cmd.cmd == Constants.CMD_CHAT_MSG_DANMU) {
+            msg_list.addMsgInfos(msgInfo)
+            danmu_view.addMsgInfos(msgInfo)
+          }
         }
       }
 
@@ -111,11 +120,13 @@ class WatcherLiveActivity : AppCompatActivity(),
     })
   }
 
-  override fun onSoftInputChanged(height: Int) {
-    if (height < 0) {
-      bottom_control_view.visibility = View.VISIBLE
-      chat_view.visibility = View.GONE
-    }
+  override fun onSoftKeyboardOpened(keyboardHeightInPx: Int) {
+
+  }
+
+  override fun onSoftKeyboardClosed() {
+    bottom_control_view.visibility = View.VISIBLE
+    chat_view.visibility = View.GONE
   }
 
   override fun onChatClick() {
@@ -128,8 +139,8 @@ class WatcherLiveActivity : AppCompatActivity(),
     finish()
   }
 
-  override fun onChatSend(msg: String) {
-    sendMsg(msg)
+  override fun onChatSend(cmd: ILVCustomCmd) {
+    sendMsg(cmd)
   }
 
   override fun onNewOtherMsg(message: TIMMessage?) {
@@ -137,15 +148,25 @@ class WatcherLiveActivity : AppCompatActivity(),
   }
 
   override fun onNewCustomMsg(cmd: ILVCustomCmd?, id: String?, userProfile: TIMUserProfile?) {
+    userProfile?.let {
+      val msgInfo = ChatMsgInfo(
+          userProfile.identifier,
+          userProfile.faceUrl,
+          cmd?.param ?: "",
+          userProfile.nickName)
 
+      if (cmd?.cmd == Constants.CMD_CHAT_MSG_LIST) {
+        msg_list.addMsgInfos(msgInfo)
+      } else if (cmd?.cmd == Constants.CMD_CHAT_MSG_DANMU) {
+        msg_list.addMsgInfos(msgInfo)
+        danmu_view.addMsgInfos(msgInfo)
+      }
+    }
   }
 
   override fun onNewTextMsg(text: ILVText<out ILVText<*>>?, SenderId: String?,
       userProfile: TIMUserProfile?) {
-    userProfile?.let {
-      val msgInfo = ChatMsgInfo(userProfile.identifier, userProfile.faceUrl, text?.getText() ?: "")
-      msg_list.addMsgInfos(msgInfo)
-    }
+
   }
 
   override fun onResume() {

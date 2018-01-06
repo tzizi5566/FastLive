@@ -8,5 +8,6 @@ package com.kop.fastlive.model
 data class ChatMsgInfo(
     val userId: String,
     val avatar: String,
-    val text: String
+    val text: String,
+    val nickname: String
 )

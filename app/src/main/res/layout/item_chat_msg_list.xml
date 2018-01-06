@@ -20,7 +20,7 @@
       app:layout_constraintTop_toTopOf="parent"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <io.github.rockerhieu.emojicon.EmojiconTextView
       android:id="@+id/tv_chat_content"
       android:layout_width="0dp"
       android:layout_height="wrap_content"

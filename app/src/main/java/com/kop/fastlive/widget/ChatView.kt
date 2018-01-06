@@ -12,6 +12,10 @@ import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import com.blankj.utilcode.util.KeyboardUtils
 import com.kop.fastlive.R
+import com.kop.fastlive.model.Constants
+import com.tencent.ilivesdk.core.ILiveRoomManager
+import com.tencent.livesdk.ILVCustomCmd
+import com.tencent.livesdk.ILVText.ILVTextType.eGroupMsg
 import kotlinx.android.synthetic.main.view_chat.view.cb_switch
 import kotlinx.android.synthetic.main.view_chat.view.edt_chat
 import kotlinx.android.synthetic.main.view_chat.view.tv_send
@@ -24,7 +28,7 @@ import kotlinx.android.synthetic.main.view_chat.view.tv_send
 class ChatView : LinearLayoutCompat, OnClickListener, OnCheckedChangeListener {
 
   interface OnChatSendListener {
-    fun onChatSend(msg: String)
+    fun onChatSend(cmd: ILVCustomCmd)
   }
 
   private var mOnChatSendListener: OnChatSendListener? = null
@@ -58,7 +62,12 @@ class ChatView : LinearLayoutCompat, OnClickListener, OnCheckedChangeListener {
 
   private fun sendChatMsg() {
     mOnChatSendListener?.let {
-      mOnChatSendListener!!.onChatSend(edt_chat.text.toString())
+      val ilvCustomCmd = ILVCustomCmd()
+      ilvCustomCmd.type = eGroupMsg
+      ilvCustomCmd.cmd = if (cb_switch.isChecked) Constants.CMD_CHAT_MSG_DANMU else Constants.CMD_CHAT_MSG_LIST
+      ilvCustomCmd.param = edt_chat.text.toString()
+      ilvCustomCmd.destId = ILiveRoomManager.getInstance().imGroupId
+      mOnChatSendListener!!.onChatSend(ilvCustomCmd)
       edt_chat.text.clear()
     }
   }

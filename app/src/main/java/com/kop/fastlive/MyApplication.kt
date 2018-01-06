@@ -11,6 +11,8 @@ import com.tencent.ilivesdk.ILiveSDK
 import com.tencent.livesdk.ILVLiveConfig
 import com.tencent.livesdk.ILVLiveManager
 
+
+
 /**
  * 功    能: //TODO
  * 创 建 人: KOP
@@ -27,7 +29,7 @@ class MyApplication : Application() {
     initQiNiu()
     Utils.init(this)
     AVOSCloud.initialize(this, "uPBMJAiFABWdpGJB5qtP4Twe-9Nh9j0Va", "vQVVIgU4jWA9gWkWmiuAhfGV")
-    AVOSCloud.setDebugLogEnabled(true)
+    AVOSCloud.setDebugLogEnabled(false)
   }
 
   private fun initLiveSdk() {

@@ -23,7 +23,7 @@
       app:layout_constraintTop_toTopOf="parent"
       />
 
-  <android.support.v7.widget.AppCompatEditText
+  <io.github.rockerhieu.emojicon.EmojiconEditText
       android:id="@+id/edt_chat"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
