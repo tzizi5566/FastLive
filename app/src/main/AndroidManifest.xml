@@ -45,7 +45,9 @@
         android:name=".module.hostlive.HostLiveActivity"
         android:windowSoftInputMode="adjustNothing">
     </activity>
-    <activity android:name=".module.watcher.WatcherLiveActivity">
+    <activity
+        android:name=".module.watcher.WatcherLiveActivity"
+        android:windowSoftInputMode="adjustNothing">
     </activity>
   </application>
 

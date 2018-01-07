@@ -1,6 +1,9 @@
 package com.kop.fastlive.module.watcher
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
@@ -8,7 +11,8 @@ import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.model.ChatMsgInfo
 import com.kop.fastlive.model.Constants
-import com.kop.fastlive.utils.SoftKeyBroadManager
+import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
+import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
 import com.tencent.TIMMessage
@@ -24,17 +28,19 @@ import kotlinx.android.synthetic.main.activity_watcher_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_watcher_live.chat_view
 import kotlinx.android.synthetic.main.activity_watcher_live.cl_view
 import kotlinx.android.synthetic.main.activity_watcher_live.danmu_view
+import kotlinx.android.synthetic.main.activity_watcher_live.keyboard
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
 import kotlinx.android.synthetic.main.activity_watcher_live.msg_list
 
 class WatcherLiveActivity : AppCompatActivity(),
     BottomControlView.OnControlListener,
     ChatView.OnChatSendListener,
-    SoftKeyBroadManager.SoftKeyboardStateListener,
+    KeyboardHeightObserver,
     ILVLiveConfig.ILVLiveMsgListener {
 
   private var mRoomId: Int = -1
   private var mHostId: String? = null
+  private var mKeyboardHeightProvider: KeyboardHeightProvider? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -49,9 +55,9 @@ class WatcherLiveActivity : AppCompatActivity(),
   private fun registerListener() {
     bottom_control_view.setOnControlListener(this)
     chat_view.setOnChatSendListener(this)
-    val keyBroadManager = SoftKeyBroadManager(cl_view, false)
-    keyBroadManager.addSoftKeyboardStateListener(this)
     (application as MyApplication).getLiveConfig().liveMsgListener = this
+    mKeyboardHeightProvider = KeyboardHeightProvider(this)
+    cl_view.post({ mKeyboardHeightProvider?.start() })
   }
 
   private fun joinRoom() {
@@ -120,13 +126,24 @@ class WatcherLiveActivity : AppCompatActivity(),
     })
   }
 
-  override fun onSoftKeyboardOpened(keyboardHeightInPx: Int) {
+  private fun translationView(height: Int) {
+    val chatViewAnimator = ObjectAnimator.ofFloat(chat_view, View.TRANSLATION_Y, -height.toFloat())
+    val msgListAnimator = ObjectAnimator.ofFloat(msg_list, View.TRANSLATION_Y, -height.toFloat())
 
+    val animatorSet = AnimatorSet()
+    animatorSet.playTogether(chatViewAnimator, msgListAnimator)
+    animatorSet.duration = 300
+    animatorSet.start()
   }
 
-  override fun onSoftKeyboardClosed() {
-    bottom_control_view.visibility = View.VISIBLE
-    chat_view.visibility = View.GONE
+  override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
+    if (height == 0) {
+      bottom_control_view.visibility = View.VISIBLE
+      chat_view.visibility = View.GONE
+    }
+    translationView(height)
+    val params = keyboard.layoutParams as ConstraintLayout.LayoutParams
+    params.height = height
   }
 
   override fun onChatClick() {
@@ -171,16 +188,19 @@ class WatcherLiveActivity : AppCompatActivity(),
 
   override fun onResume() {
     super.onResume()
+    mKeyboardHeightProvider?.setKeyboardHeightObserver(this)
     ILVLiveManager.getInstance().onResume()
   }
 
   override fun onPause() {
     super.onPause()
+    mKeyboardHeightProvider?.setKeyboardHeightObserver(null)
     ILVLiveManager.getInstance().onPause()
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    mKeyboardHeightProvider?.close()
     quitRoom()
     ILVLiveManager.getInstance().onDestory()
   }

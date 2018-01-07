@@ -9,7 +9,7 @@ import android.util.AttributeSet
  * 创 建 人: KOP
  * 创建日期: 2018/1/6 17:10
  */
-class TestLayout : ContentFrameLayout {
+class FullScreenLayout : ContentFrameLayout {
 
   private var mL: Int = 0
   private var mT: Int = 0

@@ -8,7 +8,7 @@ import com.bumptech.glide.request.RequestOptions
 
 
 /**
- * 功    能: //TODO
+ * 功    能: Glide工具类
  * 创 建 人: KOP
  * 创建日期: 2017/12/20 17:50
  */

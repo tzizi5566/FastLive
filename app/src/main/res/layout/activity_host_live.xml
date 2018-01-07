@@ -9,7 +9,14 @@
     tools:context="com.kop.fastlive.module.hostlive.HostLiveActivity"
     >
 
-  <com.kop.fastlive.widget.TestLayout
+  <View
+      android:id="@+id/keyboard"
+      android:layout_width="wrap_content"
+      android:layout_height="1dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      />
+
+  <com.kop.fastlive.widget.FullScreenLayout
       android:layout_width="0dp"
       android:layout_height="0dp"
       app:layout_constraintBottom_toBottomOf="parent"
@@ -24,7 +31,7 @@
         android:layout_height="match_parent"
         />
 
-  </com.kop.fastlive.widget.TestLayout>
+  </com.kop.fastlive.widget.FullScreenLayout>
 
   <com.kop.fastlive.widget.ChatMsgRecyclerView
       android:id="@+id/msg_list"
