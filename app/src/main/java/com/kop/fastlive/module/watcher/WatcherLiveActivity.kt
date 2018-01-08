@@ -10,7 +10,6 @@ import android.widget.Toast
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.model.ChatMsgInfo
-import com.kop.fastlive.model.Constants
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
@@ -111,9 +110,9 @@ class WatcherLiveActivity : AppCompatActivity(),
               cmd.param ?: "",
               userProfile.nickName)
 
-          if (cmd.cmd == Constants.CMD_CHAT_MSG_LIST) {
+          if (cmd.cmd == ChatView.CMD_CHAT_MSG_LIST) {
             msg_list.addMsgInfos(msgInfo)
-          } else if (cmd.cmd == Constants.CMD_CHAT_MSG_DANMU) {
+          } else if (cmd.cmd == ChatView.CMD_CHAT_MSG_DANMU) {
             msg_list.addMsgInfos(msgInfo)
             danmu_view.addMsgInfos(msgInfo)
           }
@@ -172,9 +171,9 @@ class WatcherLiveActivity : AppCompatActivity(),
           cmd?.param ?: "",
           userProfile.nickName)
 
-      if (cmd?.cmd == Constants.CMD_CHAT_MSG_LIST) {
+      if (cmd?.cmd == ChatView.CMD_CHAT_MSG_LIST) {
         msg_list.addMsgInfos(msgInfo)
-      } else if (cmd?.cmd == Constants.CMD_CHAT_MSG_DANMU) {
+      } else if (cmd?.cmd == ChatView.CMD_CHAT_MSG_DANMU) {
         msg_list.addMsgInfos(msgInfo)
         danmu_view.addMsgInfos(msgInfo)
       }

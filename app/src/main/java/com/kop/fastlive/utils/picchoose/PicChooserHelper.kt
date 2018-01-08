@@ -10,7 +10,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.utils.QnUploadHelper
-import com.kop.fastlive.utils.QnUploadHelper.UploadCallBack
+import com.kop.fastlive.utils.QnUploadHelper.Companion.UploadCallBack
 import com.kop.fastlive.utils.picchoose.PicChooserType.AVATAR
 import com.kop.fastlive.utils.picchoose.PicChooserType.COVER
 import com.kop.fastlive.widget.PicChooseDialog
@@ -37,10 +37,13 @@ class PicChooserHelper(activity: Activity, picType: PicChooserType = AVATAR) {
     mOnChooserResultListener = l
   }
 
+  companion object {
+    private const val CROP = 0
+    private const val FROM_ALBUM = 1
+    private const val FROM_CAMERA = 2
+  }
+
   private val mActivity = activity
-  private val CROP = 0
-  private val FROM_ALBUM = 1
-  private val FROM_CAMERA = 2
 
   private var mCameraUri: Uri? = null
   private var mCropUri: Uri? = null

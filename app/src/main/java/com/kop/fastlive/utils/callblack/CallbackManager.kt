@@ -9,7 +9,7 @@ import java.util.WeakHashMap
  */
 class CallbackManager {
 
-  private val CALLBACKS = WeakHashMap<Any, IGlobalCallback<Any>>()
+  private val weakHashMap = WeakHashMap<Any, IGlobalCallback<Any>>()
 
   private object Holder {
     val INSTANCE = CallbackManager()
@@ -22,11 +22,11 @@ class CallbackManager {
   }
 
   fun addCallback(tag: Any, callback: IGlobalCallback<Any>): CallbackManager {
-    CALLBACKS.put(tag, callback)
+    weakHashMap.put(tag, callback)
     return this
   }
 
   fun getCallback(tag: Any): IGlobalCallback<Any>? {
-    return CALLBACKS[tag]
+    return weakHashMap[tag]
   }
 }
