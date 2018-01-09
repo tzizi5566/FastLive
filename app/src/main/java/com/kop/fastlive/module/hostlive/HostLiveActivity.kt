@@ -18,6 +18,7 @@ import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
+import com.kop.fastlive.widget.GiftSelectDialog
 import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
@@ -165,6 +166,12 @@ class HostLiveActivity : AppCompatActivity(),
 
   override fun onCloseClick() {
     finish()
+  }
+
+  override fun onGiftClick() {
+    bottom_control_view.visibility = View.INVISIBLE
+    val giftSelectDialog = GiftSelectDialog(this)
+    giftSelectDialog.show()
   }
 
   override fun onChatSend(cmd: ILVCustomCmd) {

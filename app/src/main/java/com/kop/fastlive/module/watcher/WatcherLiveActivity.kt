@@ -155,6 +155,10 @@ class WatcherLiveActivity : AppCompatActivity(),
     finish()
   }
 
+  override fun onGiftClick() {
+
+  }
+
   override fun onChatSend(cmd: ILVCustomCmd) {
     sendMsg(cmd)
   }

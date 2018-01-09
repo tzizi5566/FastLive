@@ -9,6 +9,7 @@ import android.widget.RelativeLayout
 import com.kop.fastlive.R
 import kotlinx.android.synthetic.main.view_bottom_control.view.iv_chat
 import kotlinx.android.synthetic.main.view_bottom_control.view.iv_close
+import kotlinx.android.synthetic.main.view_bottom_control.view.iv_gift
 
 /**
  * 功    能: //TODO
@@ -21,6 +22,8 @@ class BottomControlView : RelativeLayout, OnClickListener {
     fun onChatClick()
 
     fun onCloseClick()
+
+    fun onGiftClick()
   }
 
   private var mOnControlListener: OnControlListener? = null
@@ -50,6 +53,7 @@ class BottomControlView : RelativeLayout, OnClickListener {
   private fun registerListener() {
     iv_chat.setOnClickListener(this)
     iv_close.setOnClickListener(this)
+    iv_gift.setOnClickListener(this)
   }
 
   override fun onClick(v: View?) {
@@ -63,6 +67,12 @@ class BottomControlView : RelativeLayout, OnClickListener {
       R.id.iv_close -> {
         if (mOnControlListener != null) {
           mOnControlListener!!.onCloseClick()
+        }
+      }
+
+      R.id.iv_gift -> {
+        if (mOnControlListener != null) {
+          mOnControlListener!!.onGiftClick()
         }
       }
     }

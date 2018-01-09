@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+  <android.support.v4.view.ViewPager
+      android:id="@+id/vp_view"
+      android:layout_width="match_parent"
+      android:layout_height="100dp"
+      android:overScrollMode="never"
+      />
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="#66000000"
+      app:layout_constraintTop_toBottomOf="@+id/vp_view"
+      >
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        >
+
+      <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/iv_indicator_one"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ind_s"
+          />
+
+      <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/iv_indicator_two"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ind_uns"
+          />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_send"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_bkg_red_rect_round_fill"
+        android:text="发送"
+        android:visibility="invisible"
+        tools:ignore="HardcodedText"
+        />
+
+  </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
