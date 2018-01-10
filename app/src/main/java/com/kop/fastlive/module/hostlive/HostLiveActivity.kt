@@ -11,14 +11,19 @@ import com.avos.avoscloud.AVCloudQueryResult
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.CloudQueryCallback
+import com.google.gson.Gson
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.model.ChatMsgInfo
+import com.kop.fastlive.model.ChatType
+import com.kop.fastlive.model.GiftCmdInfo
+import com.kop.fastlive.model.GiftInfo
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
 import com.kop.fastlive.widget.GiftSelectDialog
+import com.kop.fastlive.widget.GiftSelectDialog.OnGiftSendListener
 import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
@@ -34,6 +39,7 @@ import kotlinx.android.synthetic.main.activity_host_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_host_live.chat_view
 import kotlinx.android.synthetic.main.activity_host_live.cl_view
 import kotlinx.android.synthetic.main.activity_host_live.danmu_view
+import kotlinx.android.synthetic.main.activity_host_live.gift_view
 import kotlinx.android.synthetic.main.activity_host_live.keyboard
 import kotlinx.android.synthetic.main.activity_host_live.live_view
 import kotlinx.android.synthetic.main.activity_host_live.msg_list
@@ -116,24 +122,38 @@ class HostLiveActivity : AppCompatActivity(),
     ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
       override fun onSuccess(data: TIMMessage?) {
         val userProfile = (application as MyApplication).getUserProfile()
-        userProfile?.let {
-          val msgInfo = ChatMsgInfo(
-              userProfile.identifier,
-              userProfile.faceUrl,
-              cmd.param ?: "",
-              userProfile.nickName)
+        val msgInfo = ChatMsgInfo(
+            userProfile.identifier,
+            userProfile.faceUrl,
+            cmd.param ?: "",
+            userProfile.nickName)
 
-          if (cmd.cmd == ChatView.CMD_CHAT_MSG_LIST) {
-            msg_list.addMsgInfos(msgInfo)
-          } else if (cmd.cmd == ChatView.CMD_CHAT_MSG_DANMU) {
-            msg_list.addMsgInfos(msgInfo)
-            danmu_view.addMsgInfos(msgInfo)
-          }
+        if (cmd.cmd == ChatType.CMD_CHAT_MSG_LIST) {
+          msg_list.addMsgInfos(msgInfo)
+        } else if (cmd.cmd == ChatType.CMD_CHAT_MSG_DANMU) {
+          msg_list.addMsgInfos(msgInfo)
+          danmu_view.addMsgInfos(msgInfo)
         }
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {
         Toast.makeText(this@HostLiveActivity, "发送消息失败：$errCode !", Toast.LENGTH_SHORT).show()
+      }
+    })
+  }
+
+  private fun sendGiftMsg(cmd: ILVCustomCmd) {
+    ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
+      override fun onSuccess(data: TIMMessage?) {
+        val userProfile = (application as MyApplication).getUserProfile()
+        val gson = Gson()
+        val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+        val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+        gift_view.showGift(giftInfo, userProfile)
+      }
+
+      override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
       }
     })
   }
@@ -150,6 +170,7 @@ class HostLiveActivity : AppCompatActivity(),
 
   override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
     if (height == 0) {
+      chat_view.setFocusable(this, false)
       bottom_control_view.visibility = View.VISIBLE
       chat_view.visibility = View.GONE
     }
@@ -161,7 +182,7 @@ class HostLiveActivity : AppCompatActivity(),
   override fun onChatClick() {
     bottom_control_view.visibility = View.GONE
     chat_view.visibility = View.VISIBLE
-    chat_view.setFocusable(this)
+    chat_view.setFocusable(this, true)
   }
 
   override fun onCloseClick() {
@@ -169,9 +190,18 @@ class HostLiveActivity : AppCompatActivity(),
   }
 
   override fun onGiftClick() {
-    bottom_control_view.visibility = View.INVISIBLE
+    //todo bug
+//    bottom_control_view.visibility = View.GONE
     val giftSelectDialog = GiftSelectDialog(this)
     giftSelectDialog.show()
+    giftSelectDialog.dialog.setOnCancelListener {
+      bottom_control_view.visibility = View.VISIBLE
+    }
+    giftSelectDialog.setGiftSendListener(object : OnGiftSendListener {
+      override fun onGiftSendClick(customCmd: ILVCustomCmd) {
+        sendGiftMsg(customCmd)
+      }
+    })
   }
 
   override fun onChatSend(cmd: ILVCustomCmd) {
@@ -190,11 +220,20 @@ class HostLiveActivity : AppCompatActivity(),
           cmd?.param ?: "",
           userProfile.nickName)
 
-      if (cmd?.cmd == ChatView.CMD_CHAT_MSG_LIST) {
-        msg_list.addMsgInfos(msgInfo)
-      } else if (cmd?.cmd == ChatView.CMD_CHAT_MSG_DANMU) {
-        msg_list.addMsgInfos(msgInfo)
-        danmu_view.addMsgInfos(msgInfo)
+      when {
+        cmd?.cmd == ChatType.CMD_CHAT_MSG_LIST -> msg_list.addMsgInfos(msgInfo)
+
+        cmd?.cmd == ChatType.CMD_CHAT_MSG_DANMU -> {
+          msg_list.addMsgInfos(msgInfo)
+          danmu_view.addMsgInfos(msgInfo)
+        }
+
+        cmd?.cmd == ChatType.CMD_CHAT_GIFT -> {
+          val gson = Gson()
+          val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+          val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+          gift_view.showGift(giftInfo, userProfile)
+        }
       }
     }
   }

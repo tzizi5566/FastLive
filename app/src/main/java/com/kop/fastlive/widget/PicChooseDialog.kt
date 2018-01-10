@@ -49,6 +49,7 @@ class PicChooseDialog(activity: Activity) : TransParentDialog(activity) {
 
   override fun show() {
     val window = dialog.window
+    window.setWindowAnimations(R.style.dialogAnimation)
     val lp = window.attributes
     lp.gravity = Gravity.BOTTOM
     dialog.window.attributes = lp

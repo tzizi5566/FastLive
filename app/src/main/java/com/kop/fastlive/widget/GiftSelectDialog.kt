@@ -6,11 +6,18 @@ import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.WindowManager
+import com.google.gson.Gson
 import com.kop.fastlive.R
+import com.kop.fastlive.model.ChatType
+import com.kop.fastlive.model.GiftCmdInfo
 import com.kop.fastlive.model.GiftInfo
 import com.kop.fastlive.widget.GiftGridView.OnGiftItemClickListener
+import com.tencent.ilivesdk.core.ILiveRoomManager
+import com.tencent.livesdk.ILVCustomCmd
+import com.tencent.livesdk.ILVText.ILVTextType
 import kotlinx.android.synthetic.main.dialog_gift_select.view.btn_send
 import kotlinx.android.synthetic.main.dialog_gift_select.view.iv_indicator_one
 import kotlinx.android.synthetic.main.dialog_gift_select.view.iv_indicator_two
@@ -21,13 +28,25 @@ import kotlinx.android.synthetic.main.dialog_gift_select.view.vp_view
  * 创 建 人: KOP
  * 创建日期: 2018/1/9 14:17
  */
-class GiftSelectDialog(val activity: Activity) : TransParentDialog(activity), OnPageChangeListener {
+class GiftSelectDialog(val activity: Activity) : TransParentDialog(
+    activity), OnPageChangeListener, OnClickListener {
+
+  private var onGiftSendListener: OnGiftSendListener? = null
+
+  interface OnGiftSendListener {
+    fun onGiftSendClick(customCmd: ILVCustomCmd)
+  }
+
+  fun setGiftSendListener(l: OnGiftSendListener) {
+    onGiftSendListener = l
+  }
 
   private var mView: View = LayoutInflater.from(activity).inflate(R.layout.dialog_gift_select, null,
       false)
   private var mGiftList = mutableListOf<GiftInfo>()
   private val mPageViews = mutableListOf<GiftGridView>()
   private lateinit var mAdapter: GiftAdapter
+  private var mSelectGiftInfo: GiftInfo? = null
 
   init {
     setContentView(mView)
@@ -36,6 +55,7 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(activity), On
 
     addGifts()
     initAdapter()
+    registerListener()
   }
 
   private fun addGifts() {
@@ -54,6 +74,24 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(activity), On
     mAdapter = GiftAdapter()
     mView.vp_view.adapter = mAdapter
     mView.vp_view.addOnPageChangeListener(this)
+  }
+
+  private fun registerListener() {
+    mView.btn_send.setOnClickListener(this)
+  }
+
+  override fun onClick(v: View?) {
+    if (onGiftSendListener != null) {
+      val ilvCustomCmd = ILVCustomCmd()
+      ilvCustomCmd.type = ILVTextType.eGroupMsg
+      ilvCustomCmd.cmd = ChatType.CMD_CHAT_GIFT
+      ilvCustomCmd.destId = ILiveRoomManager.getInstance().imGroupId
+      val giftCmdInfo = GiftCmdInfo(mSelectGiftInfo?.giftId, "")
+      val gson = Gson()
+      ilvCustomCmd.param = gson.toJson(giftCmdInfo)
+
+      onGiftSendListener?.onGiftSendClick(ilvCustomCmd)
+    }
   }
 
   override fun onPageScrollStateChanged(state: Int) {
@@ -76,6 +114,7 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(activity), On
 
   override fun show() {
     val window = dialog.window
+    window.setWindowAnimations(R.style.dialogAnimation)
     val lp = window.attributes
     lp.gravity = Gravity.BOTTOM
     dialog.window.attributes = lp
@@ -123,6 +162,8 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(activity), On
 
       giftGridView.setOnGiftItemClickListener(object : OnGiftItemClickListener {
         override fun onClick(giftInfo: GiftInfo?) {
+          mSelectGiftInfo = giftInfo
+
           if (giftInfo != null) {
             mView.btn_send.visibility = View.VISIBLE
           } else {

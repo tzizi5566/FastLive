@@ -12,10 +12,10 @@ import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import com.blankj.utilcode.util.KeyboardUtils
 import com.kop.fastlive.R
+import com.kop.fastlive.model.ChatType
 import com.tencent.ilivesdk.core.ILiveRoomManager
 import com.tencent.livesdk.ILVCustomCmd
-import com.tencent.livesdk.ILVLiveConstants
-import com.tencent.livesdk.ILVText.ILVTextType.eGroupMsg
+import com.tencent.livesdk.ILVText.ILVTextType
 import kotlinx.android.synthetic.main.view_chat.view.cb_switch
 import kotlinx.android.synthetic.main.view_chat.view.edt_chat
 import kotlinx.android.synthetic.main.view_chat.view.tv_send
@@ -35,17 +35,6 @@ class ChatView : LinearLayoutCompat, OnClickListener, OnCheckedChangeListener {
 
   fun setOnChatSendListener(l: OnChatSendListener) {
     mOnChatSendListener = l
-  }
-
-  companion object {
-    //自定义发送列表聊天
-    const val CMD_CHAT_MSG_LIST = ILVLiveConstants.ILVLIVE_CMD_CUSTOM_LOW_LIMIT + 1
-
-    //自定义发送弹幕聊天
-    const val CMD_CHAT_MSG_DANMU = ILVLiveConstants.ILVLIVE_CMD_CUSTOM_LOW_LIMIT + 2
-
-    //自定义发送礼物
-    const val CMD_CHAT_GIFT = ILVLiveConstants.ILVLIVE_CMD_CUSTOM_LOW_LIMIT + 3
   }
 
   constructor(context: Context?) : super(context) {
@@ -74,8 +63,8 @@ class ChatView : LinearLayoutCompat, OnClickListener, OnCheckedChangeListener {
   private fun sendChatMsg() {
     mOnChatSendListener?.let {
       val ilvCustomCmd = ILVCustomCmd()
-      ilvCustomCmd.type = eGroupMsg
-      ilvCustomCmd.cmd = if (cb_switch.isChecked) ChatView.CMD_CHAT_MSG_DANMU else ChatView.CMD_CHAT_MSG_LIST
+      ilvCustomCmd.type = ILVTextType.eGroupMsg
+      ilvCustomCmd.cmd = if (cb_switch.isChecked) ChatType.CMD_CHAT_MSG_DANMU else ChatType.CMD_CHAT_MSG_LIST
       ilvCustomCmd.param = edt_chat.text.toString()
       ilvCustomCmd.destId = ILiveRoomManager.getInstance().imGroupId
       mOnChatSendListener!!.onChatSend(ilvCustomCmd)
@@ -92,11 +81,16 @@ class ChatView : LinearLayoutCompat, OnClickListener, OnCheckedChangeListener {
     edt_chat.hint = hint
   }
 
-  fun setFocusable(activity: Activity) {
-    edt_chat.isFocusable = true
-    edt_chat.isFocusableInTouchMode = true
+  fun setFocusable(activity: Activity, boolean: Boolean) {
+    edt_chat.isFocusable = boolean
+    edt_chat.isFocusableInTouchMode = boolean
     edt_chat.requestFocus()
-    activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-    KeyboardUtils.showSoftInput(activity)
+    if (boolean) {
+      activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+      KeyboardUtils.showSoftInput(activity)
+    } else {
+      activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+      KeyboardUtils.hideSoftInput(activity)
+    }
   }
 }

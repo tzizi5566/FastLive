@@ -21,7 +21,7 @@ import com.tencent.livesdk.ILVLiveManager
 class MyApplication : Application() {
 
   private val mLiveConfig = ILVLiveConfig()
-  private var mSelfProfile: TIMUserProfile? = null
+  private lateinit var mSelfProfile: TIMUserProfile
 
   override fun onCreate() {
     super.onCreate()
@@ -58,7 +58,7 @@ class MyApplication : Application() {
     mSelfProfile = userProfile
   }
 
-  fun getUserProfile(): TIMUserProfile? {
+  fun getUserProfile(): TIMUserProfile {
     return mSelfProfile
   }
 

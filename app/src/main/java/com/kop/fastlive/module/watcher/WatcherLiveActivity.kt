@@ -7,13 +7,19 @@ import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
+import com.google.gson.Gson
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.model.ChatMsgInfo
+import com.kop.fastlive.model.ChatType
+import com.kop.fastlive.model.GiftCmdInfo
+import com.kop.fastlive.model.GiftInfo
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
+import com.kop.fastlive.widget.GiftSelectDialog
+import com.kop.fastlive.widget.GiftSelectDialog.OnGiftSendListener
 import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
@@ -27,6 +33,7 @@ import kotlinx.android.synthetic.main.activity_watcher_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_watcher_live.chat_view
 import kotlinx.android.synthetic.main.activity_watcher_live.cl_view
 import kotlinx.android.synthetic.main.activity_watcher_live.danmu_view
+import kotlinx.android.synthetic.main.activity_watcher_live.gift_view
 import kotlinx.android.synthetic.main.activity_watcher_live.keyboard
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
 import kotlinx.android.synthetic.main.activity_watcher_live.msg_list
@@ -110,9 +117,9 @@ class WatcherLiveActivity : AppCompatActivity(),
               cmd.param ?: "",
               userProfile.nickName)
 
-          if (cmd.cmd == ChatView.CMD_CHAT_MSG_LIST) {
+          if (cmd.cmd == ChatType.CMD_CHAT_MSG_LIST) {
             msg_list.addMsgInfos(msgInfo)
-          } else if (cmd.cmd == ChatView.CMD_CHAT_MSG_DANMU) {
+          } else if (cmd.cmd == ChatType.CMD_CHAT_MSG_DANMU) {
             msg_list.addMsgInfos(msgInfo)
             danmu_view.addMsgInfos(msgInfo)
           }
@@ -125,12 +132,31 @@ class WatcherLiveActivity : AppCompatActivity(),
     })
   }
 
+  private fun sendGiftMsg(cmd: ILVCustomCmd) {
+    ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
+      override fun onSuccess(data: TIMMessage?) {
+        val userProfile = (application as MyApplication).getUserProfile()
+        userProfile?.let {
+          val gson = Gson()
+          val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+          val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+          gift_view.showGift(giftInfo, userProfile)
+        }
+      }
+
+      override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+      }
+    })
+  }
+
   private fun translationView(height: Int) {
     val chatViewAnimator = ObjectAnimator.ofFloat(chat_view, View.TRANSLATION_Y, -height.toFloat())
     val msgListAnimator = ObjectAnimator.ofFloat(msg_list, View.TRANSLATION_Y, -height.toFloat())
+    val giftViewAnimator = ObjectAnimator.ofFloat(msg_list, View.TRANSLATION_Y, -height.toFloat())
 
     val animatorSet = AnimatorSet()
-    animatorSet.playTogether(chatViewAnimator, msgListAnimator)
+    animatorSet.playTogether(chatViewAnimator, msgListAnimator, giftViewAnimator)
     animatorSet.duration = 300
     animatorSet.start()
   }
@@ -148,7 +174,7 @@ class WatcherLiveActivity : AppCompatActivity(),
   override fun onChatClick() {
     bottom_control_view.visibility = View.GONE
     chat_view.visibility = View.VISIBLE
-    chat_view.setFocusable(this)
+    chat_view.setFocusable(this, true)
   }
 
   override fun onCloseClick() {
@@ -156,7 +182,17 @@ class WatcherLiveActivity : AppCompatActivity(),
   }
 
   override fun onGiftClick() {
-
+    bottom_control_view.visibility = View.INVISIBLE
+    val giftSelectDialog = GiftSelectDialog(this)
+    giftSelectDialog.show()
+    giftSelectDialog.dialog.setOnCancelListener {
+      bottom_control_view.visibility = View.VISIBLE
+    }
+    giftSelectDialog.setGiftSendListener(object : OnGiftSendListener {
+      override fun onGiftSendClick(customCmd: ILVCustomCmd) {
+        sendGiftMsg(customCmd)
+      }
+    })
   }
 
   override fun onChatSend(cmd: ILVCustomCmd) {
@@ -175,11 +211,20 @@ class WatcherLiveActivity : AppCompatActivity(),
           cmd?.param ?: "",
           userProfile.nickName)
 
-      if (cmd?.cmd == ChatView.CMD_CHAT_MSG_LIST) {
-        msg_list.addMsgInfos(msgInfo)
-      } else if (cmd?.cmd == ChatView.CMD_CHAT_MSG_DANMU) {
-        msg_list.addMsgInfos(msgInfo)
-        danmu_view.addMsgInfos(msgInfo)
+      when {
+        cmd?.cmd == ChatType.CMD_CHAT_MSG_LIST -> msg_list.addMsgInfos(msgInfo)
+
+        cmd?.cmd == ChatType.CMD_CHAT_MSG_DANMU -> {
+          msg_list.addMsgInfos(msgInfo)
+          danmu_view.addMsgInfos(msgInfo)
+        }
+
+        cmd?.cmd == ChatType.CMD_CHAT_GIFT -> {
+          val gson = Gson()
+          val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+          val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+          gift_view.showGift(giftInfo, userProfile)
+        }
       }
     }
   }

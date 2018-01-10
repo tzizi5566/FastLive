@@ -20,7 +20,7 @@ open class TransParentDialog(activity: Activity) {
 
   fun setWidthAndHeight(width: Int, height: Int) {
     val win = dialog.window
-    val params = win!!.attributes
+    val params = win?.attributes
     if (params != null) {
       params.width = width//设置宽度
       params.height = height//设置高度

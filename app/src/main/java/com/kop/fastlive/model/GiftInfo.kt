@@ -25,20 +25,20 @@ data class GiftInfo(
     var Gift_ZuanShi = GiftInfo(7, R.drawable.gift_7, 100, "钻石", GiftType.ContinueGift)
     var Gift_BaoXiang = GiftInfo(8, R.drawable.gift_8, 200, "宝箱", GiftType.ContinueGift)
     var Gift_BaoShiJie = GiftInfo(9, R.drawable.gift_9, 1000, "保时捷", GiftType.FullScreenGift)
-  }
 
-  fun getGiftById(id: Int): GiftInfo? {
-    when (id) {
-      1 -> return Gift_BingGun
-      2 -> return Gift_BingJiLing
-      3 -> return Gift_MeiGui
-      4 -> return Gift_PiJiu
-      5 -> return Gift_HongJiu
-      6 -> return Gift_Hongbao
-      7 -> return Gift_ZuanShi
-      8 -> return Gift_BaoXiang
-      9 -> return Gift_BaoShiJie
+    fun getGiftById(id: Int): GiftInfo? {
+      when (id) {
+        1 -> return Gift_BingGun
+        2 -> return Gift_BingJiLing
+        3 -> return Gift_MeiGui
+        4 -> return Gift_PiJiu
+        5 -> return Gift_HongJiu
+        6 -> return Gift_Hongbao
+        7 -> return Gift_ZuanShi
+        8 -> return Gift_BaoXiang
+        9 -> return Gift_BaoShiJie
+      }
+      return null
     }
-    return null
   }
 }
