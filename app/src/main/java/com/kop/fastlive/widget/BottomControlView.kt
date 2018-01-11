@@ -1,11 +1,11 @@
 package com.kop.fastlive.widget
 
 import android.content.Context
+import android.support.v7.widget.LinearLayoutCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
-import android.widget.RelativeLayout
 import com.kop.fastlive.R
 import kotlinx.android.synthetic.main.view_bottom_control.view.iv_chat
 import kotlinx.android.synthetic.main.view_bottom_control.view.iv_close
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.view_bottom_control.view.iv_gift
  * 创 建 人: KOP
  * 创建日期: 2018/1/3 15:11
  */
-class BottomControlView : RelativeLayout, OnClickListener {
+class BottomControlView : LinearLayoutCompat, OnClickListener {
 
   interface OnControlListener {
     fun onChatClick()

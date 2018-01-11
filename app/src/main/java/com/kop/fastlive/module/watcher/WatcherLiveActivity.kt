@@ -53,7 +53,6 @@ class WatcherLiveActivity : AppCompatActivity(),
     setContentView(R.layout.activity_watcher_live)
 
     registerListener()
-    live_view.setAutoOrientation(false)
     ILVLiveManager.getInstance().setAvVideoView(live_view)
     joinRoom()
   }
@@ -110,19 +109,17 @@ class WatcherLiveActivity : AppCompatActivity(),
     ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
       override fun onSuccess(data: TIMMessage?) {
         val userProfile = (application as MyApplication).getUserProfile()
-        userProfile?.let {
-          val msgInfo = ChatMsgInfo(
-              userProfile.identifier,
-              userProfile.faceUrl,
-              cmd.param ?: "",
-              userProfile.nickName)
+        val msgInfo = ChatMsgInfo(
+            userProfile.identifier,
+            userProfile.faceUrl,
+            cmd.param ?: "",
+            userProfile.nickName)
 
-          if (cmd.cmd == ChatType.CMD_CHAT_MSG_LIST) {
-            msg_list.addMsgInfos(msgInfo)
-          } else if (cmd.cmd == ChatType.CMD_CHAT_MSG_DANMU) {
-            msg_list.addMsgInfos(msgInfo)
-            danmu_view.addMsgInfos(msgInfo)
-          }
+        if (cmd.cmd == ChatType.CMD_CHAT_MSG_LIST) {
+          msg_list.addMsgInfos(msgInfo)
+        } else if (cmd.cmd == ChatType.CMD_CHAT_MSG_DANMU) {
+          msg_list.addMsgInfos(msgInfo)
+          danmu_view.addMsgInfos(msgInfo)
         }
       }
 
@@ -136,12 +133,10 @@ class WatcherLiveActivity : AppCompatActivity(),
     ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
       override fun onSuccess(data: TIMMessage?) {
         val userProfile = (application as MyApplication).getUserProfile()
-        userProfile?.let {
-          val gson = Gson()
-          val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
-          val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-          gift_view.showGift(giftInfo, userProfile)
-        }
+        val gson = Gson()
+        val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+        val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+        gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {
@@ -153,16 +148,16 @@ class WatcherLiveActivity : AppCompatActivity(),
   private fun translationView(height: Int) {
     val chatViewAnimator = ObjectAnimator.ofFloat(chat_view, View.TRANSLATION_Y, -height.toFloat())
     val msgListAnimator = ObjectAnimator.ofFloat(msg_list, View.TRANSLATION_Y, -height.toFloat())
-    val giftViewAnimator = ObjectAnimator.ofFloat(msg_list, View.TRANSLATION_Y, -height.toFloat())
 
     val animatorSet = AnimatorSet()
-    animatorSet.playTogether(chatViewAnimator, msgListAnimator, giftViewAnimator)
+    animatorSet.playTogether(chatViewAnimator, msgListAnimator)
     animatorSet.duration = 300
     animatorSet.start()
   }
 
   override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
     if (height == 0) {
+      chat_view.setFocusable(this, false)
       bottom_control_view.visibility = View.VISIBLE
       chat_view.visibility = View.GONE
     }
@@ -182,11 +177,11 @@ class WatcherLiveActivity : AppCompatActivity(),
   }
 
   override fun onGiftClick() {
-    bottom_control_view.visibility = View.INVISIBLE
+    bottom_control_view.alpha = 0F//此处设置visibility会出现礼物动画不显示的bug
     val giftSelectDialog = GiftSelectDialog(this)
     giftSelectDialog.show()
     giftSelectDialog.dialog.setOnCancelListener {
-      bottom_control_view.visibility = View.VISIBLE
+      bottom_control_view.alpha = 1F
     }
     giftSelectDialog.setGiftSendListener(object : OnGiftSendListener {
       override fun onGiftSendClick(customCmd: ILVCustomCmd) {
@@ -223,7 +218,7 @@ class WatcherLiveActivity : AppCompatActivity(),
           val gson = Gson()
           val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
           val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-          gift_view.showGift(giftInfo, userProfile)
+          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
         }
       }
     }

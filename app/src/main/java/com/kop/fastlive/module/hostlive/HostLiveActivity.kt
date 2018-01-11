@@ -22,8 +22,6 @@ import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
-import com.kop.fastlive.widget.GiftSelectDialog
-import com.kop.fastlive.widget.GiftSelectDialog.OnGiftSendListener
 import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
@@ -142,21 +140,21 @@ class HostLiveActivity : AppCompatActivity(),
     })
   }
 
-  private fun sendGiftMsg(cmd: ILVCustomCmd) {
-    ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
-      override fun onSuccess(data: TIMMessage?) {
-        val userProfile = (application as MyApplication).getUserProfile()
-        val gson = Gson()
-        val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
-        val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-        gift_view.showGift(giftInfo, userProfile)
-      }
-
-      override fun onError(module: String?, errCode: Int, errMsg: String?) {
-
-      }
-    })
-  }
+//  private fun sendGiftMsg(cmd: ILVCustomCmd) {
+//    ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
+//      override fun onSuccess(data: TIMMessage?) {
+//        val userProfile = (application as MyApplication).getUserProfile()
+//        val gson = Gson()
+//        val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+//        val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+//        gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+//      }
+//
+//      override fun onError(module: String?, errCode: Int, errMsg: String?) {
+//
+//      }
+//    })
+//  }
 
   private fun translationView(height: Int) {
     val chatViewAnimator = ObjectAnimator.ofFloat(chat_view, View.TRANSLATION_Y, -height.toFloat())
@@ -190,18 +188,17 @@ class HostLiveActivity : AppCompatActivity(),
   }
 
   override fun onGiftClick() {
-    //todo bug
-//    bottom_control_view.visibility = View.GONE
-    val giftSelectDialog = GiftSelectDialog(this)
-    giftSelectDialog.show()
-    giftSelectDialog.dialog.setOnCancelListener {
-      bottom_control_view.visibility = View.VISIBLE
-    }
-    giftSelectDialog.setGiftSendListener(object : OnGiftSendListener {
-      override fun onGiftSendClick(customCmd: ILVCustomCmd) {
-        sendGiftMsg(customCmd)
-      }
-    })
+//    bottom_control_view.alpha = 0F//此处设置visibility会出现礼物动画不显示的bug
+//    val giftSelectDialog = GiftSelectDialog(this)
+//    giftSelectDialog.show()
+//    giftSelectDialog.dialog.setOnCancelListener {
+//      bottom_control_view.alpha = 1F
+//    }
+//    giftSelectDialog.setGiftSendListener(object : OnGiftSendListener {
+//      override fun onGiftSendClick(customCmd: ILVCustomCmd) {
+//        sendGiftMsg(customCmd)
+//      }
+//    })
   }
 
   override fun onChatSend(cmd: ILVCustomCmd) {
@@ -232,7 +229,7 @@ class HostLiveActivity : AppCompatActivity(),
           val gson = Gson()
           val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
           val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-          gift_view.showGift(giftInfo, userProfile)
+          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
         }
       }
     }

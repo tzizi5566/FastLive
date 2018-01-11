@@ -26,10 +26,26 @@ import kotlinx.android.synthetic.main.view_gift_repeat_item.view.tv_user_name
  */
 class GiftRepeatItemView : LinearLayoutCompat {
 
+  interface OnGiftItemAvaliableListener {
+    fun onAvaliable()
+  }
+
+  private var listener: OnGiftItemAvaliableListener? = null
+
+  fun setOnGiftItemAvaliableListener(l: OnGiftItemAvaliableListener) {
+    listener = l
+  }
+
   private lateinit var mViewInAnim: Animation
   private lateinit var mViewOutAnim: Animation
   private lateinit var mIconInAnim: Animation
   private lateinit var mNumScaleAnim: Animation
+  private var mGiftId = -1
+  private var mRepeatId = ""
+  private var mUserId = ""
+  private var mLeftNum = 0
+  private var mTotalNum = 0
+  private var inAnim = false
 
   constructor(context: Context?) : super(context) {
     init()
@@ -96,12 +112,21 @@ class GiftRepeatItemView : LinearLayoutCompat {
       }
 
       override fun onAnimationEnd(animation: Animation?) {
+
         postDelayed({
-          startAnimation(mViewOutAnim)
-        }, 1000)
+          if (mLeftNum > 0) {
+            tv_gift_num.startAnimation(mNumScaleAnim)
+          } else {
+            startAnimation(mViewOutAnim)
+          }
+        }, 200)
       }
 
+      @SuppressLint("SetTextI18n")
       override fun onAnimationStart(animation: Animation?) {
+        mTotalNum++
+        mLeftNum--
+        tv_gift_num.text = "x$mTotalNum"
         tv_gift_num.visibility = View.VISIBLE
       }
     })
@@ -113,6 +138,13 @@ class GiftRepeatItemView : LinearLayoutCompat {
 
       override fun onAnimationEnd(animation: Animation?) {
         visibility = View.INVISIBLE
+
+        mGiftId = -1
+        mLeftNum = 0
+        mTotalNum = 0
+        inAnim = false
+
+        listener?.onAvaliable()
       }
 
       override fun onAnimationStart(animation: Animation?) {
@@ -121,16 +153,34 @@ class GiftRepeatItemView : LinearLayoutCompat {
     })
   }
 
+  fun isMatch(giftInfo: GiftInfo?, repeatId: String, userProfile: TIMUserProfile): Boolean {
+    return if (visibility == View.VISIBLE) {
+      repeatId == mRepeatId && userProfile.identifier == mUserId && giftInfo?.giftId == mGiftId
+    } else {
+      false
+    }
+  }
+
   fun isAvaliable(): Boolean {
     return visibility != View.VISIBLE
   }
 
-  fun showGift(giftInfo: GiftInfo?, userProfile: TIMUserProfile) {
+  fun showGift(giftInfo: GiftInfo?, repeatId: String, userProfile: TIMUserProfile) {
+    if (mGiftId == -1) {
+      mGiftId = giftInfo?.giftId!!
+      mRepeatId = repeatId
+      mUserId = userProfile.identifier
+    }
+    mLeftNum++
+
+    if (inAnim) return
+
     bindData(giftInfo, userProfile)
     startAnim()
   }
 
   private fun startAnim() {
+    inAnim = true
     post {
       startAnimation(mViewInAnim)
     }
