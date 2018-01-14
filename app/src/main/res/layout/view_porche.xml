@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical"
+    >
+
+  <android.support.constraint.ConstraintLayout
+      android:id="@+id/cl_view"
+      android:layout_width="180dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:background="@drawable/round_bkg_big"
+      >
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_user_header"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/default_avatar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_user_name"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:maxWidth="100dp"
+        android:text="发送者名字"
+        android:textColor="#FA4C8F"
+        android:textSize="14sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintLeft_toRightOf="@+id/iv_user_header"
+        tools:ignore="HardcodedText"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_gift_name"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="送一个冰棍"
+        android:textColor="#FFF"
+        android:textSize="12sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintLeft_toRightOf="@+id/iv_user_header"
+        app:layout_constraintTop_toBottomOf="@+id/tv_user_name"
+        tools:ignore="HardcodedText"
+        />
+
+  </android.support.constraint.ConstraintLayout>
+
+  <android.support.v7.widget.ContentFrameLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      >
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/porche"
+        />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_wheel_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="39dp"
+        android:src="@drawable/wheel_back_drawable"
+        />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_wheel_front"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="145dp"
+        android:layout_marginTop="71dp"
+        android:src="@drawable/wheel_front_drawable"
+        />
+
+  </android.support.v7.widget.ContentFrameLayout>
+
+</android.support.v7.widget.LinearLayoutCompat>

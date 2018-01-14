@@ -20,7 +20,7 @@ import java.util.LinkedList
  */
 class GiftRepeatView : LinearLayoutCompat, OnGiftItemAvaliableListener {
 
-  private val mList = LinkedList<GiftSenderAndInfo>()
+  private val mList = LinkedList<GiftCachInfo>()
 
   constructor(context: Context?) : super(context) {
     init()
@@ -48,8 +48,8 @@ class GiftRepeatView : LinearLayoutCompat, OnGiftItemAvaliableListener {
   fun showGift(giftInfo: GiftInfo?, repeatId: String, userProfile: TIMUserProfile) {
     val repeatItemView = getAvaliableItemView(giftInfo, repeatId, userProfile)
     if (repeatItemView == null) {
-      val giftSenderAndInfo = GiftSenderAndInfo(giftInfo!!, repeatId, userProfile)
-      mList.add(giftSenderAndInfo)
+      val cachInfo = GiftCachInfo(giftInfo!!, repeatId, userProfile)
+      mList.add(cachInfo)
     } else {
       repeatItemView.showGift(giftInfo, repeatId, userProfile)
     }
@@ -93,7 +93,7 @@ class GiftRepeatView : LinearLayoutCompat, OnGiftItemAvaliableListener {
     }
   }
 
-  class GiftSenderAndInfo(
+  class GiftCachInfo(
       val giftInfo: GiftInfo,
       val repeatId: String,
       val senderProfile: TIMUserProfile

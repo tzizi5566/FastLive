@@ -53,7 +53,7 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(
   private lateinit var mAdapter: GiftAdapter
   private var mSelectGiftInfo: GiftInfo? = null
   private var mRepeatId = ""
-  private var mLeftTime = 5
+  private var mLeftTime = 3
   private val mHandler = MyHandler(this)
 
   companion object {
@@ -101,7 +101,7 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(
   private fun stopRepeatTimer() {
     mHandler.removeMessages(WHAT_UPDATE_TIME)
     mHandler.removeMessages(WHAT_MINUTES_TIME)
-    mLeftTime = 5
+    mLeftTime = 3
   }
 
   override fun onClick(v: View?) {
@@ -240,14 +240,14 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(
         when {
           WHAT_UPDATE_TIME == what -> {
             selectDialog.mView.btn_send.text = "发送(${selectDialog.mLeftTime}s)"
-            selectDialog.mHandler.sendEmptyMessageDelayed(WHAT_MINUTES_TIME, 500)
+            selectDialog.mHandler.sendEmptyMessageDelayed(WHAT_MINUTES_TIME, 300)
           }
 
           WHAT_MINUTES_TIME == what -> {
             selectDialog.mLeftTime--
             if (selectDialog.mLeftTime > 0) {
               selectDialog.mView.btn_send.text = "发送(${selectDialog.mLeftTime}s)"
-              selectDialog.mHandler.sendEmptyMessageDelayed(WHAT_MINUTES_TIME, 500)
+              selectDialog.mHandler.sendEmptyMessageDelayed(WHAT_MINUTES_TIME, 300)
             } else {
               selectDialog.mView.btn_send.text = "发送"
               selectDialog.mRepeatId = ""

@@ -119,7 +119,7 @@ class GiftRepeatItemView : LinearLayoutCompat {
           } else {
             startAnimation(mViewOutAnim)
           }
-        }, 200)
+        }, 500)
       }
 
       @SuppressLint("SetTextI18n")
@@ -190,9 +190,9 @@ class GiftRepeatItemView : LinearLayoutCompat {
   private fun bindData(giftInfo: GiftInfo?, userProfile: TIMUserProfile) {
     val avatarUrl = userProfile.faceUrl
     if (avatarUrl.isNullOrEmpty()) {
-      ImgUtil.load(context, R.drawable.default_avatar, iv_user_header)
+      ImgUtil.loadRound(context, R.drawable.default_avatar, iv_user_header)
     } else {
-      ImgUtil.load(context, avatarUrl, iv_user_header)
+      ImgUtil.loadRound(context, avatarUrl, iv_user_header)
     }
 
     var nickName = userProfile.nickName

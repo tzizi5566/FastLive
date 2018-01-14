@@ -74,4 +74,10 @@
       app:layout_constraintTop_toTopOf="parent"
       />
 
+  <com.kop.fastlive.widget.GiftFullView
+      android:id="@+id/gift_full_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
+
 </android.support.constraint.ConstraintLayout>

@@ -168,11 +168,7 @@ class PicChooserHelper(activity: Activity, picType: PicChooserType = AVATAR) {
       dir.mkdirs()
     }
     val selfProfile = (mActivity.application as MyApplication).getUserProfile()
-    val fileName = if (selfProfile != null) {
-      System.currentTimeMillis().toString() + selfProfile.identifier + ".jpg"
-    } else {
-      System.currentTimeMillis().toString() + ".jpg"
-    }
+    val fileName = System.currentTimeMillis().toString() + selfProfile.identifier + ".jpg"
 
     val jpgFile = File(dir, fileName)
     if (jpgFile.exists()) {
@@ -188,11 +184,7 @@ class PicChooserHelper(activity: Activity, picType: PicChooserType = AVATAR) {
       dir.mkdirs()
     }
     val selfProfile = (mActivity.application as MyApplication).getUserProfile()
-    val fileName = if (selfProfile != null) {
-      System.currentTimeMillis().toString() + selfProfile.identifier + "_crop.jpg"
-    } else {
-      System.currentTimeMillis().toString() + "_crop.jpg"
-    }
+    val fileName = System.currentTimeMillis().toString() + selfProfile.identifier + "_crop.jpg"
 
     val jpgFile = File(dir, fileName)
     if (jpgFile.exists()) {

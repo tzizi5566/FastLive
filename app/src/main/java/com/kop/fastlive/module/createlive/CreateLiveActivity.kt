@@ -72,37 +72,35 @@ class CreateLiveActivity : PermissionCheckActivity(), OnClickListener {
         object : IGlobalCallback<Any> {
           override fun executeCallback(args: Any) {
             val selfProfile = (application as MyApplication).getUserProfile()
-            selfProfile?.let {
-              val roomId = NumUtil.getRandomNum()
-              val userId = selfProfile.identifier
-              val userAvatar = selfProfile.faceUrl
-              val nickName = selfProfile.nickName
-              val userName = if (TextUtils.isEmpty(nickName)) selfProfile.identifier else nickName
-              val liveCover = mCoverUrl
-              val liveTitle = edt_title.text.toString()
+            val roomId = NumUtil.getRandomNum()
+            val userId = selfProfile.identifier
+            val userAvatar = selfProfile.faceUrl
+            val nickName = selfProfile.nickName
+            val userName = if (TextUtils.isEmpty(nickName)) selfProfile.identifier else nickName
+            val liveCover = mCoverUrl
+            val liveTitle = edt_title.text.toString()
 
-              val avObject = AVObject("RoomInfo")
-              avObject.put("room_id", roomId)
-              avObject.put("user_id", userId)
-              avObject.put("user_avatar", userAvatar)
-              avObject.put("user_name", userName)
-              avObject.put("live_cover", liveCover)
-              avObject.put("live_title", liveTitle)
-              avObject.saveInBackground(object : SaveCallback() {
-                override fun done(p0: AVException?) {
-                  if (p0 == null) {
-                    val intent = Intent(this@CreateLiveActivity, HostLiveActivity::class.java)
-                    intent.putExtra("roomId", roomId)
-                    intent.putExtra("objectId", avObject.objectId)
-                    startActivity(intent)
-                    Toast.makeText(this@CreateLiveActivity, "创建成功！", Toast.LENGTH_SHORT).show()
-                    finish()
-                  } else {
-                    Toast.makeText(this@CreateLiveActivity, p0.message, Toast.LENGTH_SHORT).show()
-                  }
+            val avObject = AVObject("RoomInfo")
+            avObject.put("room_id", roomId)
+            avObject.put("user_id", userId)
+            avObject.put("user_avatar", userAvatar)
+            avObject.put("user_name", userName)
+            avObject.put("live_cover", liveCover)
+            avObject.put("live_title", liveTitle)
+            avObject.saveInBackground(object : SaveCallback() {
+              override fun done(p0: AVException?) {
+                if (p0 == null) {
+                  val intent = Intent(this@CreateLiveActivity, HostLiveActivity::class.java)
+                  intent.putExtra("roomId", roomId)
+                  intent.putExtra("objectId", avObject.objectId)
+                  startActivity(intent)
+                  Toast.makeText(this@CreateLiveActivity, "创建成功！", Toast.LENGTH_SHORT).show()
+                  finish()
+                } else {
+                  Toast.makeText(this@CreateLiveActivity, p0.message, Toast.LENGTH_SHORT).show()
                 }
-              })
-            }
+              }
+            })
           }
         })
   }

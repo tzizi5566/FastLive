@@ -18,6 +18,7 @@ import com.kop.fastlive.model.ChatMsgInfo
 import com.kop.fastlive.model.ChatType
 import com.kop.fastlive.model.GiftCmdInfo
 import com.kop.fastlive.model.GiftInfo
+import com.kop.fastlive.model.GiftType
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
@@ -37,6 +38,7 @@ import kotlinx.android.synthetic.main.activity_host_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_host_live.chat_view
 import kotlinx.android.synthetic.main.activity_host_live.cl_view
 import kotlinx.android.synthetic.main.activity_host_live.danmu_view
+import kotlinx.android.synthetic.main.activity_host_live.gift_full_view
 import kotlinx.android.synthetic.main.activity_host_live.gift_view
 import kotlinx.android.synthetic.main.activity_host_live.keyboard
 import kotlinx.android.synthetic.main.activity_host_live.live_view
@@ -229,7 +231,12 @@ class HostLiveActivity : AppCompatActivity(),
           val gson = Gson()
           val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
           val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+
+          if (giftInfo?.type == GiftType.ContinueGift) {
+            gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+          } else if (giftInfo?.type == GiftType.FullScreenGift) {
+            gift_full_view.showGift(giftInfo, userProfile)
+          }
         }
       }
     }

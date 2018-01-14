@@ -14,6 +14,7 @@ import com.kop.fastlive.model.ChatMsgInfo
 import com.kop.fastlive.model.ChatType
 import com.kop.fastlive.model.GiftCmdInfo
 import com.kop.fastlive.model.GiftInfo
+import com.kop.fastlive.model.GiftType
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
@@ -33,6 +34,7 @@ import kotlinx.android.synthetic.main.activity_watcher_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_watcher_live.chat_view
 import kotlinx.android.synthetic.main.activity_watcher_live.cl_view
 import kotlinx.android.synthetic.main.activity_watcher_live.danmu_view
+import kotlinx.android.synthetic.main.activity_watcher_live.gift_full_view
 import kotlinx.android.synthetic.main.activity_watcher_live.gift_view
 import kotlinx.android.synthetic.main.activity_watcher_live.keyboard
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
@@ -136,7 +138,12 @@ class WatcherLiveActivity : AppCompatActivity(),
         val gson = Gson()
         val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
         val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-        gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+
+        if (giftInfo?.type == GiftType.ContinueGift) {
+          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+        } else if (giftInfo?.type == GiftType.FullScreenGift) {
+          gift_full_view.showGift(giftInfo, userProfile)
+        }
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {
@@ -214,12 +221,12 @@ class WatcherLiveActivity : AppCompatActivity(),
           danmu_view.addMsgInfos(msgInfo)
         }
 
-        cmd?.cmd == ChatType.CMD_CHAT_GIFT -> {
-          val gson = Gson()
-          val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
-          val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
-        }
+//        cmd?.cmd == ChatType.CMD_CHAT_GIFT -> {
+//          val gson = Gson()
+//          val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+//          val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+//          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+//        }
       }
     }
   }
