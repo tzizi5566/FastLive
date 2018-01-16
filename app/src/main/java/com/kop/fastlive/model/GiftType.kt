@@ -8,5 +8,6 @@ package com.kop.fastlive.model
 enum class GiftType {
 
   ContinueGift,
-  FullScreenGift
+  FullScreenGift,
+  HeartGift
 }

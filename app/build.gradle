@@ -56,7 +56,7 @@ dependencies {
   //PermissionsDispatcher
   compile('com.github.hotchemi:permissionsdispatcher:3.1.0') { exclude module: 'support-v13' }
   kapt 'com.github.hotchemi:permissionsdispatcher-processor:3.1.0'
-  // LeanCloud 基础包
+  //LeanCloud 基础包
   compile('cn.leancloud.android:avoscloud-sdk:v3.+')
   //圆角布局
   compile 'com.gcssloop.widget:rclayout:1.4.3@aar'
@@ -64,4 +64,6 @@ dependencies {
   compile 'io.github.rockerhieu:emojicon:1.4.0'
   //Gson
   compile 'com.google.code.gson:gson:2.8.0'
+  //HeartLayout
+  compile 'tyrant:heartlayout:1.0.1'
 }

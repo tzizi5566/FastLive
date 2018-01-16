@@ -119,7 +119,7 @@ class GiftRepeatItemView : LinearLayoutCompat {
           } else {
             startAnimation(mViewOutAnim)
           }
-        }, 500)
+        }, 300)
       }
 
       @SuppressLint("SetTextI18n")

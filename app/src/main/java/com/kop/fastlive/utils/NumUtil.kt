@@ -1,5 +1,6 @@
 package com.kop.fastlive.utils
 
+import android.graphics.Color
 import java.util.Random
 
 
@@ -11,6 +12,9 @@ import java.util.Random
 class NumUtil {
 
   companion object {
+
+    private val RANDOM = Random()
+
     fun getRandomNum(): String {
       val random = Random()
       val builder = StringBuilder()
@@ -18,6 +22,10 @@ class NumUtil {
         builder.append(random.nextInt(10))
       }
       return builder.toString()
+    }
+
+    fun getRandomColor(): Int {
+      return Color.rgb(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255))
     }
   }
 }

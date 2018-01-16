@@ -15,6 +15,7 @@ import com.kop.fastlive.model.ChatType
 import com.kop.fastlive.model.GiftCmdInfo
 import com.kop.fastlive.model.GiftInfo
 import com.kop.fastlive.model.GiftType
+import com.kop.fastlive.utils.NumUtil
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
@@ -25,20 +26,25 @@ import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
 import com.tencent.ilivesdk.ILiveCallBack
+import com.tencent.ilivesdk.core.ILiveRoomManager
 import com.tencent.livesdk.ILVCustomCmd
 import com.tencent.livesdk.ILVLiveConfig
 import com.tencent.livesdk.ILVLiveManager
 import com.tencent.livesdk.ILVLiveRoomOption
 import com.tencent.livesdk.ILVText
+import com.tencent.livesdk.ILVText.ILVTextType
 import kotlinx.android.synthetic.main.activity_watcher_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_watcher_live.chat_view
 import kotlinx.android.synthetic.main.activity_watcher_live.cl_view
 import kotlinx.android.synthetic.main.activity_watcher_live.danmu_view
 import kotlinx.android.synthetic.main.activity_watcher_live.gift_full_view
 import kotlinx.android.synthetic.main.activity_watcher_live.gift_view
+import kotlinx.android.synthetic.main.activity_watcher_live.heart_layout
 import kotlinx.android.synthetic.main.activity_watcher_live.keyboard
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
 import kotlinx.android.synthetic.main.activity_watcher_live.msg_list
+import java.util.Timer
+import kotlin.concurrent.timerTask
 
 class WatcherLiveActivity : AppCompatActivity(),
     BottomControlView.OnControlListener,
@@ -49,6 +55,7 @@ class WatcherLiveActivity : AppCompatActivity(),
   private var mRoomId: Int = -1
   private var mHostId: String? = null
   private var mKeyboardHeightProvider: KeyboardHeightProvider? = null
+  private val mHeartTimer = Timer()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -65,6 +72,18 @@ class WatcherLiveActivity : AppCompatActivity(),
     (application as MyApplication).getLiveConfig().liveMsgListener = this
     mKeyboardHeightProvider = KeyboardHeightProvider(this)
     cl_view.post({ mKeyboardHeightProvider?.start() })
+
+    live_view.setOnClickListener {
+      val ilvCustomCmd = ILVCustomCmd()
+      ilvCustomCmd.type = ILVTextType.eGroupMsg
+      ilvCustomCmd.cmd = ChatType.CMD_CHAT_GIFT
+      ilvCustomCmd.destId = ILiveRoomManager.getInstance().imGroupId
+      val giftCmdInfo = GiftCmdInfo(GiftInfo.Gift_Heart.giftId, "")
+      val gson = Gson()
+      ilvCustomCmd.param = gson.toJson(giftCmdInfo)
+
+      sendGiftMsg(ilvCustomCmd)
+    }
   }
 
   private fun joinRoom() {
@@ -85,7 +104,11 @@ class WatcherLiveActivity : AppCompatActivity(),
     //加入房间
     ILVLiveManager.getInstance().joinRoom(mRoomId, memberOption, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any) {
-
+        mHeartTimer.schedule(timerTask {
+          runOnUiThread {
+            heart_layout.addHeart(NumUtil.getRandomColor())
+          }
+        }, 0, 1500)
       }
 
       override fun onError(module: String, errCode: Int, errMsg: String) {
@@ -139,10 +162,15 @@ class WatcherLiveActivity : AppCompatActivity(),
         val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
         val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
 
-        if (giftInfo?.type == GiftType.ContinueGift) {
-          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
-        } else if (giftInfo?.type == GiftType.FullScreenGift) {
-          gift_full_view.showGift(giftInfo, userProfile)
+        when {
+          giftInfo?.type == GiftType.ContinueGift ->
+            gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+
+          giftInfo?.type == GiftType.FullScreenGift ->
+            gift_full_view.showGift(giftInfo, userProfile)
+
+          giftInfo?.type == GiftType.HeartGift ->
+            heart_layout.addHeart(NumUtil.getRandomColor())
         }
       }
 
@@ -220,13 +248,6 @@ class WatcherLiveActivity : AppCompatActivity(),
           msg_list.addMsgInfos(msgInfo)
           danmu_view.addMsgInfos(msgInfo)
         }
-
-//        cmd?.cmd == ChatType.CMD_CHAT_GIFT -> {
-//          val gson = Gson()
-//          val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
-//          val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-//          gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
-//        }
       }
     }
   }

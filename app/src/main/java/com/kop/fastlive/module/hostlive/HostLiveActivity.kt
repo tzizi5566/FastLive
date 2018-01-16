@@ -19,30 +19,38 @@ import com.kop.fastlive.model.ChatType
 import com.kop.fastlive.model.GiftCmdInfo
 import com.kop.fastlive.model.GiftInfo
 import com.kop.fastlive.model.GiftType
+import com.kop.fastlive.utils.NumUtil
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
 import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
+import com.kop.fastlive.widget.GiftSelectDialog
+import com.kop.fastlive.widget.GiftSelectDialog.OnGiftSendListener
 import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
 import com.tencent.av.sdk.AVRoomMulti
 import com.tencent.ilivesdk.ILiveCallBack
 import com.tencent.ilivesdk.ILiveConstants
 import com.tencent.ilivesdk.core.ILiveLoginManager
+import com.tencent.ilivesdk.core.ILiveRoomManager
 import com.tencent.livesdk.ILVCustomCmd
 import com.tencent.livesdk.ILVLiveConfig
 import com.tencent.livesdk.ILVLiveManager
 import com.tencent.livesdk.ILVLiveRoomOption
 import com.tencent.livesdk.ILVText
+import com.tencent.livesdk.ILVText.ILVTextType
 import kotlinx.android.synthetic.main.activity_host_live.bottom_control_view
 import kotlinx.android.synthetic.main.activity_host_live.chat_view
 import kotlinx.android.synthetic.main.activity_host_live.cl_view
 import kotlinx.android.synthetic.main.activity_host_live.danmu_view
 import kotlinx.android.synthetic.main.activity_host_live.gift_full_view
 import kotlinx.android.synthetic.main.activity_host_live.gift_view
+import kotlinx.android.synthetic.main.activity_host_live.heart_layout
 import kotlinx.android.synthetic.main.activity_host_live.keyboard
 import kotlinx.android.synthetic.main.activity_host_live.live_view
 import kotlinx.android.synthetic.main.activity_host_live.msg_list
+import java.util.Timer
+import kotlin.concurrent.timerTask
 
 
 class HostLiveActivity : AppCompatActivity(),
@@ -53,6 +61,7 @@ class HostLiveActivity : AppCompatActivity(),
 
   private var mRoomId: Int = -1
   private var mKeyboardHeightProvider: KeyboardHeightProvider? = null
+  private val mHeartTimer = Timer()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -79,7 +88,11 @@ class HostLiveActivity : AppCompatActivity(),
     //创建房间
     ILVLiveManager.getInstance().createRoom(mRoomId, hostOption, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any) {
-
+        mHeartTimer.schedule(timerTask {
+          runOnUiThread {
+            heart_layout.addHeart(NumUtil.getRandomColor())
+          }
+        }, 0, 1500)
       }
 
       override fun onError(module: String, errCode: Int, errMsg: String) {
@@ -116,6 +129,18 @@ class HostLiveActivity : AppCompatActivity(),
     (application as MyApplication).getLiveConfig().liveMsgListener = this
     mKeyboardHeightProvider = KeyboardHeightProvider(this)
     cl_view.post({ mKeyboardHeightProvider?.start() })
+
+    heart_layout.setOnClickListener {
+      val ilvCustomCmd = ILVCustomCmd()
+      ilvCustomCmd.type = ILVTextType.eGroupMsg
+      ilvCustomCmd.cmd = ChatType.CMD_CHAT_GIFT
+      ilvCustomCmd.destId = ILiveRoomManager.getInstance().imGroupId
+      val giftCmdInfo = GiftCmdInfo(GiftInfo.Gift_Heart.giftId, "")
+      val gson = Gson()
+      ilvCustomCmd.param = gson.toJson(giftCmdInfo)
+
+      sendGiftMsg(ilvCustomCmd)
+    }
   }
 
   private fun sendMsg(cmd: ILVCustomCmd) {
@@ -142,21 +167,31 @@ class HostLiveActivity : AppCompatActivity(),
     })
   }
 
-//  private fun sendGiftMsg(cmd: ILVCustomCmd) {
-//    ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
-//      override fun onSuccess(data: TIMMessage?) {
-//        val userProfile = (application as MyApplication).getUserProfile()
-//        val gson = Gson()
-//        val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
-//        val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
-//        gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
-//      }
-//
-//      override fun onError(module: String?, errCode: Int, errMsg: String?) {
-//
-//      }
-//    })
-//  }
+  private fun sendGiftMsg(cmd: ILVCustomCmd) {
+    ILVLiveManager.getInstance().sendCustomCmd(cmd, object : ILiveCallBack<TIMMessage> {
+      override fun onSuccess(data: TIMMessage?) {
+        val userProfile = (application as MyApplication).getUserProfile()
+        val gson = Gson()
+        val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
+        val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+
+        when {
+          giftInfo?.type == GiftType.ContinueGift ->
+            gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+
+          giftInfo?.type == GiftType.FullScreenGift ->
+            gift_full_view.showGift(giftInfo, userProfile)
+
+          giftInfo?.type == GiftType.HeartGift ->
+            heart_layout.addHeart(NumUtil.getRandomColor())
+        }
+      }
+
+      override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+      }
+    })
+  }
 
   private fun translationView(height: Int) {
     val chatViewAnimator = ObjectAnimator.ofFloat(chat_view, View.TRANSLATION_Y, -height.toFloat())
@@ -190,17 +225,17 @@ class HostLiveActivity : AppCompatActivity(),
   }
 
   override fun onGiftClick() {
-//    bottom_control_view.alpha = 0F//此处设置visibility会出现礼物动画不显示的bug
-//    val giftSelectDialog = GiftSelectDialog(this)
-//    giftSelectDialog.show()
-//    giftSelectDialog.dialog.setOnCancelListener {
-//      bottom_control_view.alpha = 1F
-//    }
-//    giftSelectDialog.setGiftSendListener(object : OnGiftSendListener {
-//      override fun onGiftSendClick(customCmd: ILVCustomCmd) {
-//        sendGiftMsg(customCmd)
-//      }
-//    })
+    bottom_control_view.alpha = 0F//此处设置visibility会出现礼物动画不显示的bug
+    val giftSelectDialog = GiftSelectDialog(this)
+    giftSelectDialog.show()
+    giftSelectDialog.dialog.setOnCancelListener {
+      bottom_control_view.alpha = 1F
+    }
+    giftSelectDialog.setGiftSendListener(object : OnGiftSendListener {
+      override fun onGiftSendClick(customCmd: ILVCustomCmd) {
+        sendGiftMsg(customCmd)
+      }
+    })
   }
 
   override fun onChatSend(cmd: ILVCustomCmd) {
@@ -232,10 +267,15 @@ class HostLiveActivity : AppCompatActivity(),
           val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
           val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
 
-          if (giftInfo?.type == GiftType.ContinueGift) {
-            gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
-          } else if (giftInfo?.type == GiftType.FullScreenGift) {
-            gift_full_view.showGift(giftInfo, userProfile)
+          when {
+            giftInfo?.type == GiftType.ContinueGift ->
+              gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+
+            giftInfo?.type == GiftType.FullScreenGift ->
+              gift_full_view.showGift(giftInfo, userProfile)
+
+            giftInfo?.type == GiftType.HeartGift ->
+              heart_layout.addHeart(NumUtil.getRandomColor())
           }
         }
       }
@@ -261,6 +301,7 @@ class HostLiveActivity : AppCompatActivity(),
 
   override fun onDestroy() {
     super.onDestroy()
+    mHeartTimer.cancel()
     mKeyboardHeightProvider?.close()
     quitRoom()
     ILVLiveManager.getInstance().onDestory()

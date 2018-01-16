@@ -15,6 +15,7 @@ data class GiftInfo(
     val type: GiftType
 ) {
   companion object {
+    var Gift_Heart = GiftInfo(-1, 0, 0, "", GiftType.HeartGift)
     var Gift_Empty = GiftInfo(0, R.drawable.gift_none, 0, "", GiftType.ContinueGift)
     var Gift_BingGun = GiftInfo(1, R.drawable.gift_1, 1, "冰棍", GiftType.ContinueGift)
     var Gift_BingJiLing = GiftInfo(2, R.drawable.gift_2, 5, "冰激凌", GiftType.ContinueGift)
@@ -28,6 +29,7 @@ data class GiftInfo(
 
     fun getGiftById(id: Int): GiftInfo? {
       when (id) {
+        -1 -> return Gift_Heart
         1 -> return Gift_BingGun
         2 -> return Gift_BingJiLing
         3 -> return Gift_MeiGui
