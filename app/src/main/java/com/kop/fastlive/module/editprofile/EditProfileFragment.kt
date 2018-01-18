@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.blankj.utilcode.util.SPUtils
+import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.choosePicWithPermissionCheck
 import com.kop.fastlive.module.main.MainActivity
@@ -97,6 +98,7 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
     TIMFriendshipManager.getInstance().getSelfProfile(object : TIMValueCallBack<TIMUserProfile> {
       override fun onSuccess(timUserProfile: TIMUserProfile) {
         //获取自己信息成功
+        (activity.application as MyApplication).setUserProfile(timUserProfile)
         updateView(timUserProfile)
       }
 
@@ -131,7 +133,10 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
 
   private fun getValue(customInfo: Map<String, ByteArray>, key: String, default: String): String {
     val valueBytes = customInfo[key]
-    return valueBytes?.toString() ?: default
+    if (valueBytes != null) {
+      return String(valueBytes)
+    }
+    return default
   }
 
   override fun onClick(v: View?) {

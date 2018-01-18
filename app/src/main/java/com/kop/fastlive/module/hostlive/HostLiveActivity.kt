@@ -9,8 +9,12 @@ import android.view.View
 import android.widget.Toast
 import com.avos.avoscloud.AVCloudQueryResult
 import com.avos.avoscloud.AVException
+import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.CloudQueryCallback
+import com.avos.avoscloud.GetCallback
+import com.avos.avoscloud.SaveCallback
+import com.blankj.utilcode.util.SPUtils
 import com.google.gson.Gson
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
@@ -19,6 +23,7 @@ import com.kop.fastlive.model.ChatType
 import com.kop.fastlive.model.GiftCmdInfo
 import com.kop.fastlive.model.GiftInfo
 import com.kop.fastlive.model.GiftType
+import com.kop.fastlive.module.editprofile.CustomProfile
 import com.kop.fastlive.utils.NumUtil
 import com.kop.fastlive.utils.keyboard.KeyboardHeightObserver
 import com.kop.fastlive.utils.keyboard.KeyboardHeightProvider
@@ -26,8 +31,11 @@ import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
 import com.kop.fastlive.widget.GiftSelectDialog
 import com.kop.fastlive.widget.GiftSelectDialog.OnGiftSendListener
+import com.tencent.TIMCallBack
+import com.tencent.TIMFriendshipManager
 import com.tencent.TIMMessage
 import com.tencent.TIMUserProfile
+import com.tencent.TIMValueCallBack
 import com.tencent.av.sdk.AVRoomMulti
 import com.tencent.ilivesdk.ILiveCallBack
 import com.tencent.ilivesdk.ILiveConstants
@@ -62,6 +70,7 @@ class HostLiveActivity : AppCompatActivity(),
   private var mRoomId: Int = -1
   private var mKeyboardHeightProvider: KeyboardHeightProvider? = null
   private val mHeartTimer = Timer()
+  private lateinit var mUserObjectId: String
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -93,6 +102,8 @@ class HostLiveActivity : AppCompatActivity(),
             heart_layout.addHeart(NumUtil.getRandomColor())
           }
         }, 0, 1500)
+
+        mUserObjectId = SPUtils.getInstance().getString("objectId")
       }
 
       override fun onError(module: String, errCode: Int, errMsg: String) {
@@ -193,6 +204,55 @@ class HostLiveActivity : AppCompatActivity(),
     })
   }
 
+  private fun calLevel(giftInfo: GiftInfo?) {
+    var avData: AVObject?
+    val avObject = AVObject.createWithoutData("UserInfo", mUserObjectId)
+    avObject.increment("user_exp", giftInfo?.expValue?.div(2))
+    avObject.increment("get_nums")
+    avObject.isFetchWhenSave = true
+    avObject.saveInBackground(object : SaveCallback() {
+      override fun done(p0: AVException?) {
+        if (p0 == null) {
+          val avQuery = AVQuery<AVObject>("UserInfo")
+          avQuery.getInBackground(mUserObjectId, object : GetCallback<AVObject>() {
+            override fun done(p0: AVObject?, p1: AVException?) {
+              avData = p0
+              val exp = p0?.getInt("user_exp")
+              val level = exp?.div(200)?.plus(1)
+              val obj = AVObject.createWithoutData("UserInfo", mUserObjectId)
+              obj.put("user_level", level)
+              obj.saveInBackground(object : SaveCallback() {
+                override fun done(p0: AVException?) {
+                  TIMFriendshipManager.getInstance().setCustomInfo(CustomProfile.CUSTOM_LEVEL,
+                      level.toString().toByteArray(), object : TIMCallBack {
+                    override fun onSuccess() {
+                      getSelfInfo()
+                    }
+
+                    override fun onError(p0: Int, p1: String?) {
+
+                    }
+                  })
+
+                  TIMFriendshipManager.getInstance().setCustomInfo(CustomProfile.CUSTOM_GET,
+                      avData?.getInt("get_nums").toString().toByteArray(), object : TIMCallBack {
+                    override fun onSuccess() {
+                      getSelfInfo()
+                    }
+
+                    override fun onError(p0: Int, p1: String?) {
+
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      }
+    })
+  }
+
   private fun translationView(height: Int) {
     val chatViewAnimator = ObjectAnimator.ofFloat(chat_view, View.TRANSLATION_Y, -height.toFloat())
     val msgListAnimator = ObjectAnimator.ofFloat(msg_list, View.TRANSLATION_Y, -height.toFloat())
@@ -201,6 +261,19 @@ class HostLiveActivity : AppCompatActivity(),
     animatorSet.playTogether(chatViewAnimator, msgListAnimator)
     animatorSet.duration = 300
     animatorSet.start()
+  }
+
+  private fun getSelfInfo() {
+    TIMFriendshipManager.getInstance().getSelfProfile(object : TIMValueCallBack<TIMUserProfile> {
+      override fun onSuccess(timUserProfile: TIMUserProfile) {
+        //获取自己信息成功
+        (application as MyApplication).setUserProfile(timUserProfile)
+      }
+
+      override fun onError(i: Int, s: String) {
+
+      }
+    })
   }
 
   override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
@@ -266,6 +339,8 @@ class HostLiveActivity : AppCompatActivity(),
           val gson = Gson()
           val giftCmdInfo = gson.fromJson(cmd.param, GiftCmdInfo::class.java) ?: return
           val giftInfo = GiftInfo.getGiftById(giftCmdInfo.giftId!!)
+
+          calLevel(giftInfo)
 
           when {
             giftInfo?.type == GiftType.ContinueGift ->

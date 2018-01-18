@@ -66,6 +66,8 @@ class LoginActivity : AppCompatActivity() {
   private fun loginLive(userName: String, password: String) {
     ILiveLoginManager.getInstance().iLiveLogin(userName, password, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any?) {
+        getSelfProfile()
+
         Toast.makeText(this@LoginActivity, "登录成功！", Toast.LENGTH_SHORT).show()
         val spUtils = SPUtils.getInstance("FirstLogin")
         val isFirst = spUtils.getBoolean("firstLogin", true)
@@ -74,8 +76,6 @@ class LoginActivity : AppCompatActivity() {
         } else {
           startActivity(Intent(this@LoginActivity, MainActivity::class.java))
         }
-
-        getSelfProfile()
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {
