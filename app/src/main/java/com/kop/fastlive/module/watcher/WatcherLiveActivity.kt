@@ -72,6 +72,8 @@ class WatcherLiveActivity : AppCompatActivity(),
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_watcher_live)
 
+    bottom_control_view.setIsHost(false)
+
     registerListener()
     ILVLiveManager.getInstance().setAvVideoView(live_view)
     joinRoom()
@@ -302,6 +304,10 @@ class WatcherLiveActivity : AppCompatActivity(),
     })
   }
 
+  override fun onOperateClick(view: View) {
+
+  }
+
   override fun onChatSend(cmd: ILVCustomCmd) {
     sendMsg(cmd)
   }
@@ -313,10 +319,10 @@ class WatcherLiveActivity : AppCompatActivity(),
   override fun onNewCustomMsg(cmd: ILVCustomCmd?, id: String?, userProfile: TIMUserProfile?) {
     userProfile?.let {
       val msgInfo = ChatMsgInfo(
-          userProfile.identifier,
-          userProfile.faceUrl,
+          it.identifier,
+          it.faceUrl,
           cmd?.param ?: "",
-          userProfile.nickName)
+          it.nickName)
 
       when {
         cmd?.cmd == ChatType.CMD_CHAT_MSG_LIST -> msg_list.addMsgInfos(msgInfo)

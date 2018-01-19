@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/host_op_bkg"
+    android:orientation="vertical"
+    android:padding="10dp"
+    >
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_beauty"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:drawablePadding="10dp"
+      android:drawableStart="@drawable/icon_beauty_off"
+      android:padding="5dp"
+      android:text="开美颜"
+      android:textColor="#515151"
+      android:textSize="16sp"
+      app:autoSizeTextType="uniform"
+      tools:ignore="HardcodedText"
+      />
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_flash_light"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:drawablePadding="10dp"
+      android:drawableStart="@drawable/icon_flashlight_off"
+      android:padding="5dp"
+      android:text="开闪光"
+      android:textColor="#515151"
+      android:textSize="16sp"
+      app:autoSizeTextType="uniform"
+      tools:ignore="HardcodedText"
+      />
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_voice"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:drawablePadding="10dp"
+      android:drawableStart="@drawable/icon_mic_on"
+      android:padding="5dp"
+      android:text="关声音"
+      android:textColor="#515151"
+      android:textSize="16sp"
+      app:autoSizeTextType="uniform"
+      tools:ignore="HardcodedText"
+      />
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_camera"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="15dp"
+      android:drawablePadding="10dp"
+      android:drawableStart="@drawable/icon_camera_switch"
+      android:padding="5dp"
+      android:text="翻转"
+      android:textColor="#515151"
+      android:textSize="16sp"
+      app:autoSizeTextType="uniform"
+      tools:ignore="HardcodedText"
+      />
+
+</android.support.v7.widget.LinearLayoutCompat>

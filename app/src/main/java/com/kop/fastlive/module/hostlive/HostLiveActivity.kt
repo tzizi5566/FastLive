@@ -31,6 +31,8 @@ import com.kop.fastlive.widget.BottomControlView
 import com.kop.fastlive.widget.ChatView
 import com.kop.fastlive.widget.GiftSelectDialog
 import com.kop.fastlive.widget.GiftSelectDialog.OnGiftSendListener
+import com.kop.fastlive.widget.HostControlDialog
+import com.kop.fastlive.widget.HostControlDialog.OnControlClickListener
 import com.tencent.TIMCallBack
 import com.tencent.TIMFriendshipManager
 import com.tencent.TIMMessage
@@ -75,6 +77,8 @@ class HostLiveActivity : AppCompatActivity(),
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_host_live)
+
+    bottom_control_view.setIsHost(true)
 
     registerListener()
     ILVLiveManager.getInstance().setAvVideoView(live_view)
@@ -276,6 +280,32 @@ class HostLiveActivity : AppCompatActivity(),
     })
   }
 
+  private fun showHostControlDialog(view: View) {
+    val hostControlDialog = HostControlDialog(this)
+    hostControlDialog.showAtTop(view)
+    hostControlDialog.setOnControlClickListener(object : OnControlClickListener {
+      override fun onBeautyClick() {
+
+      }
+
+      override fun onFlashClick() {
+
+      }
+
+      override fun onVoiceClick() {
+
+      }
+
+      override fun onCameraClick() {
+
+      }
+
+      override fun onDialogDismiss() {
+        bottom_control_view.setOperateRes(true)
+      }
+    })
+  }
+
   override fun onKeyboardHeightChanged(height: Int, orientation: Int) {
     if (height == 0) {
       chat_view.setFocusable(this, false)
@@ -311,6 +341,10 @@ class HostLiveActivity : AppCompatActivity(),
     })
   }
 
+  override fun onOperateClick(view: View) {
+    showHostControlDialog(view)
+  }
+
   override fun onChatSend(cmd: ILVCustomCmd) {
     sendMsg(cmd)
   }
@@ -322,10 +356,10 @@ class HostLiveActivity : AppCompatActivity(),
   override fun onNewCustomMsg(cmd: ILVCustomCmd?, id: String?, userProfile: TIMUserProfile?) {
     userProfile?.let {
       val msgInfo = ChatMsgInfo(
-          userProfile.identifier,
-          userProfile.faceUrl,
+          it.identifier,
+          it.faceUrl,
           cmd?.param ?: "",
-          userProfile.nickName)
+          it.nickName)
 
       when {
         cmd?.cmd == ChatType.CMD_CHAT_MSG_LIST -> msg_list.addMsgInfos(msgInfo)

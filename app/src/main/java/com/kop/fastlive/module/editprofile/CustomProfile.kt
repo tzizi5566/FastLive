@@ -18,7 +18,7 @@ class CustomProfile {
     const val CUSTOM_SEND = PREFIX + "SEND"
 
     //腾讯基础字段
-    val allBaseInfo = (TIMFriendshipManager.TIM_PROFILE_FLAG_BIRTHDAY or
+    const val allBaseInfo = (TIMFriendshipManager.TIM_PROFILE_FLAG_BIRTHDAY or
         TIMFriendshipManager.TIM_PROFILE_FLAG_FACE_URL or
         TIMFriendshipManager.TIM_PROFILE_FLAG_GENDER or
         TIMFriendshipManager.TIM_PROFILE_FLAG_LANGUAGE or
