@@ -73,6 +73,7 @@ class HostLiveActivity : AppCompatActivity(),
   private var mKeyboardHeightProvider: KeyboardHeightProvider? = null
   private val mHeartTimer = Timer()
   private lateinit var mUserObjectId: String
+  private lateinit var mHostOperateStatus: HostOperateStatus
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -83,6 +84,7 @@ class HostLiveActivity : AppCompatActivity(),
     registerListener()
     ILVLiveManager.getInstance().setAvVideoView(live_view)
     createRoom()
+    mHostOperateStatus = HostOperateStatus()
   }
 
   private fun createRoom() {
@@ -282,22 +284,26 @@ class HostLiveActivity : AppCompatActivity(),
 
   private fun showHostControlDialog(view: View) {
     val hostControlDialog = HostControlDialog(this)
+    hostControlDialog.setStatus(
+        mHostOperateStatus.isBeautyOn(),
+        mHostOperateStatus.isVoidOn(),
+        mHostOperateStatus.isFlashOn())
     hostControlDialog.showAtTop(view)
     hostControlDialog.setOnControlClickListener(object : OnControlClickListener {
       override fun onBeautyClick() {
-
+        mHostOperateStatus.switchBeauty()
       }
 
       override fun onFlashClick() {
-
+        mHostOperateStatus.switchFlash()
       }
 
       override fun onVoiceClick() {
-
+        mHostOperateStatus.switchVoid()
       }
 
       override fun onCameraClick() {
-
+        mHostOperateStatus.switchCamera()
       }
 
       override fun onDialogDismiss() {

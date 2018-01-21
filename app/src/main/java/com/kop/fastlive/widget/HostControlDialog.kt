@@ -6,6 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import com.kop.fastlive.R
+import kotlinx.android.synthetic.main.dialog_host_control.view.tv_beauty
+import kotlinx.android.synthetic.main.dialog_host_control.view.tv_camera
+import kotlinx.android.synthetic.main.dialog_host_control.view.tv_flash_light
+import kotlinx.android.synthetic.main.dialog_host_control.view.tv_voice
 
 /**
  * 功    能: //TODO
@@ -33,19 +37,25 @@ class HostControlDialog(val activity: Activity) : TransParentDialog(activity), O
     listener = l
   }
 
+  private var mView = LayoutInflater.from(activity).inflate(R.layout.dialog_host_control, null,
+      false)
   private var mDialogWidth = 0
   private var mDialogHeight = 0
 
   init {
-    val view = LayoutInflater.from(activity).inflate(R.layout.dialog_host_control, null, false)
-    setContentView(view)
+    setContentView(mView)
 
     val width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
     val height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-    view.measure(width, height)
-    mDialogWidth = view.measuredWidth
-    mDialogHeight = view.measuredHeight
+    mView.measure(width, height)
+    mDialogWidth = mView.measuredWidth
+    mDialogHeight = mView.measuredHeight
     setWidthAndHeight(mDialogWidth, mDialogHeight)
+
+    mView.tv_beauty.setOnClickListener(this)
+    mView.tv_flash_light.setOnClickListener(this)
+    mView.tv_voice.setOnClickListener(this)
+    mView.tv_camera.setOnClickListener(this)
 
     dialog.setOnDismissListener {
       listener?.onDialogDismiss()
@@ -67,6 +77,20 @@ class HostControlDialog(val activity: Activity) : TransParentDialog(activity), O
     window.attributes = params
     window.setGravity(Gravity.START or Gravity.TOP)
     show()
+  }
+
+  fun setStatus(beautyOn: Boolean, voidOn: Boolean, flashOn: Boolean) {
+    val beautyResId = if (beautyOn) R.drawable.icon_beauty_on else R.drawable.icon_beauty_off
+    mView.tv_beauty.setCompoundDrawablesWithIntrinsicBounds(beautyResId, 0, 0, 0)
+    mView.tv_beauty.text = if (beautyOn) "关美颜" else "开美颜"
+
+    val voidResId = if (voidOn) R.drawable.icon_mic_on else R.drawable.icon_mic_off
+    mView.tv_voice.setCompoundDrawablesWithIntrinsicBounds(voidResId, 0, 0, 0)
+    mView.tv_voice.text = if (beautyOn) "关声音" else "开声音"
+
+    val flashResId = if (flashOn) R.drawable.icon_flashlight_on else R.drawable.icon_flashlight_off
+    mView.tv_flash_light.setCompoundDrawablesWithIntrinsicBounds(flashResId, 0, 0, 0)
+    mView.tv_flash_light.text = if (beautyOn) "关闪光" else "开闪光"
   }
 
   override fun onClick(v: View?) {
