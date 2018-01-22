@@ -21,19 +21,19 @@ class ChatMsgAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewH
 
   private val mContext = context
   private var mList = mutableListOf<ChatMsgInfo>()
-  private var mListener: ((View, Int) -> Unit)? = null
+  private var mListener: ((ChatMsgInfo, Int) -> Unit)? = null
   private var mPositionStart = 0
 
   fun setData(msgInfo: ChatMsgInfo) {
     mPositionStart = mList.size
     mList.add(msgInfo)
-    notifyItemRangeChanged(mPositionStart, mList.size)
+    notifyItemRangeChanged(mPositionStart, mList.size, 1)
   }
 
   fun setData(list: MutableList<ChatMsgInfo>) {
     mPositionStart = mList.size
     mList.addAll(list)
-    notifyItemRangeInserted(mPositionStart, mList.size)
+    notifyItemRangeChanged(mPositionStart, mList.size, 1)
   }
 
   override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
@@ -56,12 +56,24 @@ class ChatMsgAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewH
     }
   }
 
-  fun setOnItemClickListener(listener: ((View, Int) -> Unit)?) {
+  override fun onBindViewHolder(holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
+    if (payloads == null || payloads.isEmpty()) {
+      onBindViewHolder(holder, position)
+    } else {
+      val chatMsgInfo = mList[position]
+      with(holder as ChatMsgViewHolder) {
+        itemView.tv_chat_content.text = chatMsgInfo.text
+      }
+    }
+  }
+
+  fun setOnItemClickListener(listener: ((ChatMsgInfo, Int) -> Unit)?) {
     mListener = listener
   }
 
   inner class ChatMsgViewHolder(itemView: View,
-      listener: ((View, Int) -> Unit)?) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+      listener: ((ChatMsgInfo, Int) -> Unit)?) : RecyclerView.ViewHolder(itemView),
+      View.OnClickListener {
 
     private val mListener = listener
 
@@ -71,7 +83,7 @@ class ChatMsgAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewH
 
     override fun onClick(view: View?) {
       if (mListener != null && view != null) {
-        mListener.invoke(view, layoutPosition)
+        mListener.invoke(mList[layoutPosition], layoutPosition)
       }
     }
   }

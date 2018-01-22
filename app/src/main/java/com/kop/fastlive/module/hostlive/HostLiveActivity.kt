@@ -45,6 +45,7 @@ import com.tencent.ilivesdk.core.ILiveLoginManager
 import com.tencent.ilivesdk.core.ILiveRoomManager
 import com.tencent.livesdk.ILVCustomCmd
 import com.tencent.livesdk.ILVLiveConfig
+import com.tencent.livesdk.ILVLiveConstants
 import com.tencent.livesdk.ILVLiveManager
 import com.tencent.livesdk.ILVLiveRoomOption
 import com.tencent.livesdk.ILVText
@@ -59,6 +60,7 @@ import kotlinx.android.synthetic.main.activity_host_live.heart_layout
 import kotlinx.android.synthetic.main.activity_host_live.keyboard
 import kotlinx.android.synthetic.main.activity_host_live.live_view
 import kotlinx.android.synthetic.main.activity_host_live.msg_list
+import kotlinx.android.synthetic.main.activity_host_live.title_view
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
@@ -103,6 +105,8 @@ class HostLiveActivity : AppCompatActivity(),
     //创建房间
     ILVLiveManager.getInstance().createRoom(mRoomId, hostOption, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any) {
+        title_view.setHost((application as MyApplication).getUserProfile())
+
         mHeartTimer.schedule(timerTask {
           runOnUiThread {
             heart_layout.addHeart(NumUtil.getRandomColor())
@@ -121,23 +125,38 @@ class HostLiveActivity : AppCompatActivity(),
   private fun quitRoom() {
     val objectId = intent.getStringExtra("objectId")
 
-    ILVLiveManager.getInstance().quitRoom(object : ILiveCallBack<Any> {
-      override fun onSuccess(data: Any?) {
-        AVQuery.doCloudQueryInBackground(
-            "delete from RoomInfo where objectId='$objectId'",
-            object : CloudQueryCallback<AVCloudQueryResult>() {
-              override fun done(p0: AVCloudQueryResult?, p1: AVException?) {
-                if (p1 == null) {
-                  Toast.makeText(applicationContext, "退出成功！", Toast.LENGTH_SHORT).show()
-                }
-              }
-            })
+    val customCmd = ILVCustomCmd()
+    customCmd.type = ILVText.ILVTextType.eGroupMsg
+    customCmd.cmd = ILVLiveConstants.ILVLIVE_CMD_LEAVE
+    customCmd.destId = ILiveRoomManager.getInstance().imGroupId
+
+    ILVLiveManager.getInstance().sendCustomCmd(customCmd, object : ILiveCallBack<TIMMessage> {
+      override fun onSuccess(data: TIMMessage?) {
+        ILVLiveManager.getInstance().quitRoom(object : ILiveCallBack<Int> {
+          override fun onSuccess(data: Int?) {
+            ILVLiveManager.getInstance().onDestory()
+          }
+
+          override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+          }
+        })
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {
 
       }
     })
+
+    AVQuery.doCloudQueryInBackground(
+        "delete from RoomInfo where objectId='$objectId'",
+        object : CloudQueryCallback<AVCloudQueryResult>() {
+          override fun done(p0: AVCloudQueryResult?, p1: AVException?) {
+            if (p1 == null) {
+              Toast.makeText(applicationContext, "退出直播成功！", Toast.LENGTH_SHORT).show()
+            }
+          }
+        })
   }
 
   private fun registerListener() {
@@ -384,14 +403,22 @@ class HostLiveActivity : AppCompatActivity(),
 
           when {
             giftInfo?.type == GiftType.ContinueGift ->
-              gift_view.showGift(giftInfo, giftCmdInfo.repeatId, userProfile)
+              gift_view.showGift(giftInfo, giftCmdInfo.repeatId, it)
 
             giftInfo?.type == GiftType.FullScreenGift ->
-              gift_full_view.showGift(giftInfo, userProfile)
+              gift_full_view.showGift(giftInfo, it)
 
             giftInfo?.type == GiftType.HeartGift ->
               heart_layout.addHeart(NumUtil.getRandomColor())
           }
+        }
+
+        cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_ENTER -> {
+          title_view.addWatcher(it)
+        }
+
+        cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_LEAVE -> {
+          title_view.removeWatcher(it)
         }
       }
     }
@@ -419,6 +446,5 @@ class HostLiveActivity : AppCompatActivity(),
     mHeartTimer.cancel()
     mKeyboardHeightProvider?.close()
     quitRoom()
-    ILVLiveManager.getInstance().onDestory()
   }
 }

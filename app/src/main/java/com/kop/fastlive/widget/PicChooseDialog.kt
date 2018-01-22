@@ -29,6 +29,10 @@ class PicChooseDialog(activity: Activity) : TransParentDialog(activity) {
 
   init {
     val view = LayoutInflater.from(activity).inflate(R.layout.dialog_pic_choose, null, false)
+    setContentView(view)
+    setWidthAndHeight(WindowManager.LayoutParams.MATCH_PARENT,
+        WindowManager.LayoutParams.WRAP_CONTENT)
+
     val camera = view.tv_camera
     val picLib = view.tv_album
 
@@ -41,10 +45,6 @@ class PicChooseDialog(activity: Activity) : TransParentDialog(activity) {
       hide()
       onDialogClickListener?.onAlbum()
     }
-
-    setContentView(view)
-    setWidthAndHeight(WindowManager.LayoutParams.MATCH_PARENT,
-        WindowManager.LayoutParams.WRAP_CONTENT)
   }
 
   override fun show() {

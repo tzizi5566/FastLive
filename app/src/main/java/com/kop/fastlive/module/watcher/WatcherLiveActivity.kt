@@ -39,6 +39,7 @@ import com.tencent.ilivesdk.ILiveCallBack
 import com.tencent.ilivesdk.core.ILiveRoomManager
 import com.tencent.livesdk.ILVCustomCmd
 import com.tencent.livesdk.ILVLiveConfig
+import com.tencent.livesdk.ILVLiveConstants
 import com.tencent.livesdk.ILVLiveManager
 import com.tencent.livesdk.ILVLiveRoomOption
 import com.tencent.livesdk.ILVText
@@ -53,6 +54,7 @@ import kotlinx.android.synthetic.main.activity_watcher_live.heart_layout
 import kotlinx.android.synthetic.main.activity_watcher_live.keyboard
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
 import kotlinx.android.synthetic.main.activity_watcher_live.msg_list
+import kotlinx.android.synthetic.main.activity_watcher_live.title_view
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
@@ -117,6 +119,37 @@ class WatcherLiveActivity : AppCompatActivity(),
     //加入房间
     ILVLiveManager.getInstance().joinRoom(mRoomId, memberOption, object : ILiveCallBack<Any> {
       override fun onSuccess(data: Any) {
+        val list = listOf(mHostId)
+        TIMFriendshipManager.getInstance().getUsersProfile(list,
+            object : TIMValueCallBack<MutableList<TIMUserProfile>> {
+              override fun onSuccess(p0: MutableList<TIMUserProfile>?) {
+                p0?.let {
+                  title_view.setHost(it[0])
+                }
+              }
+
+              override fun onError(p0: Int, p1: String?) {
+
+              }
+            })
+
+        title_view.addWatcher((application as MyApplication).getUserProfile())
+
+        val ilvCustomCmd = ILVCustomCmd()
+        ilvCustomCmd.type = ILVTextType.eGroupMsg
+        ilvCustomCmd.cmd = ILVLiveConstants.ILVLIVE_CMD_ENTER
+        ilvCustomCmd.destId = ILiveRoomManager.getInstance().imGroupId
+        ILVLiveManager.getInstance().sendCustomCmd(ilvCustomCmd,
+            object : ILiveCallBack<TIMMessage> {
+              override fun onSuccess(data: TIMMessage?) {
+
+              }
+
+              override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+              }
+            })
+
         mHeartTimer.schedule(timerTask {
           runOnUiThread {
             heart_layout.addHeart(NumUtil.getRandomColor())
@@ -134,9 +167,34 @@ class WatcherLiveActivity : AppCompatActivity(),
   }
 
   private fun quitRoom() {
-    ILVLiveManager.getInstance().quitRoom(object : ILiveCallBack<Any> {
-      override fun onSuccess(data: Any?) {
-        Toast.makeText(applicationContext, "退出成功！", Toast.LENGTH_SHORT).show()
+    val ilvCustomCmd = ILVCustomCmd()
+    ilvCustomCmd.type = ILVTextType.eGroupMsg
+    ilvCustomCmd.cmd = ILVLiveConstants.ILVLIVE_CMD_LEAVE
+    ilvCustomCmd.destId = ILiveRoomManager.getInstance().imGroupId
+    ILVLiveManager.getInstance().sendCustomCmd(ilvCustomCmd, object : ILiveCallBack<TIMMessage> {
+      override fun onSuccess(data: TIMMessage?) {
+        ILVLiveManager.getInstance().quitRoom(object : ILiveCallBack<Int> {
+          override fun onSuccess(data: Int?) {
+            ILVLiveManager.getInstance().onDestory()
+          }
+
+          override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+          }
+        })
+      }
+
+      override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+      }
+    })
+  }
+
+  private fun quitRoomWithoutHost() {
+    ILVLiveManager.getInstance().quitRoom(object : ILiveCallBack<Int> {
+      override fun onSuccess(data: Int?) {
+        ILVLiveManager.getInstance().onDestory()
+        finish()
       }
 
       override fun onError(module: String?, errCode: Int, errMsg: String?) {
@@ -331,6 +389,18 @@ class WatcherLiveActivity : AppCompatActivity(),
           msg_list.addMsgInfos(msgInfo)
           danmu_view.addMsgInfos(msgInfo)
         }
+
+        cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_ENTER -> {
+          title_view.addWatcher(it)
+        }
+
+        cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_LEAVE -> {
+          if (it.identifier == mHostId) {
+            quitRoomWithoutHost()
+          } else {
+            title_view.removeWatcher(it)
+          }
+        }
       }
     }
   }
@@ -356,6 +426,5 @@ class WatcherLiveActivity : AppCompatActivity(),
     super.onDestroy()
     mKeyboardHeightProvider?.close()
     quitRoom()
-    ILVLiveManager.getInstance().onDestory()
   }
 }

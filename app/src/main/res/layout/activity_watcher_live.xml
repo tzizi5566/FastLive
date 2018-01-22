@@ -33,12 +33,17 @@
 
   </com.kop.fastlive.widget.FullScreenLayout>
 
+  <com.kop.fastlive.widget.TitleView
+      android:id="@+id/title_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      />
+
   <tyrantgit.widget.HeartLayout
       android:id="@+id/heart_layout"
       android:layout_width="100dp"
       android:layout_height="match_parent"
       android:layout_marginBottom="40dp"
-      android:gravity="center_horizontal"
       app:layout_constraintBottom_toTopOf="@+id/bottom_control_view"
       app:layout_constraintRight_toRightOf="parent"
       />

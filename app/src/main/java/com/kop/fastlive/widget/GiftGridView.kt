@@ -102,7 +102,6 @@ class GiftGridView : RecyclerView {
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int, payloads: MutableList<Any>?) {
-      super.onBindViewHolder(holder, position, payloads)
       if (payloads == null || payloads.isEmpty()) {
         onBindViewHolder(holder, position)
       } else {

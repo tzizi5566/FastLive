@@ -55,6 +55,10 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
+    val boolean = SPUtils.getInstance("FirstLogin").getBoolean("firstLogin", true)
+    if (!boolean) {
+      btn_complete.visibility = View.GONE
+    }
 
     val spUtils = SPUtils.getInstance("FirstLogin")
     spUtils.put("firstLogin", false)

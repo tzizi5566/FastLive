@@ -38,6 +38,10 @@ class LiveListFragment : Fragment() {
 
     registerListener()
     setAdapter()
+  }
+
+  override fun onResume() {
+    super.onResume()
     getLiveListData()
   }
 
@@ -52,14 +56,14 @@ class LiveListFragment : Fragment() {
         } else {
           Toast.makeText(activity, "获取数据失败 ${p1.message}", Toast.LENGTH_SHORT).show()
         }
-        sr_layout.isRefreshing = false
+        sr_layout?.isRefreshing = false
       }
     })
   }
 
   private fun setAdapter() {
     mAdapter = LiveListAdapter(activity)
-    rv_view.layoutManager = LinearLayoutManager(activity)
+    rv_view.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
     rv_view.adapter = mAdapter
     mAdapter?.setOnItemClickListener { _, i ->
       val intent = Intent(activity, WatcherLiveActivity::class.java)

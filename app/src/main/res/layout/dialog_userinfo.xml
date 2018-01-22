@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/userinfo_dialog_bkg"
+    android:orientation="vertical"
+    android:padding="10dp"
+    >
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="5dp"
+      >
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_user_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/dialog_close"
+        />
+
+  </RelativeLayout>
+
+  <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/iv_user_avatar"
+      android:layout_width="80dp"
+      android:layout_height="80dp"
+      android:layout_gravity="center_horizontal"
+      android:layout_margin="5dp"
+      />
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:orientation="vertical"
+      >
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+
+      <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_user_name"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:ellipsize="end"
+          android:maxLines="1"
+          android:text="用户昵称"
+          android:textColor="#666"
+          android:textSize="20sp"
+          tools:ignore="HardcodedText"
+          />
+
+      <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/iv_user_gender"
+          android:layout_width="20dp"
+          android:layout_height="20dp"
+          android:layout_marginStart="10dp"
+          android:src="@drawable/ic_male"
+          />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        >
+
+      <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_user_id"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:maxLines="1"
+          android:text="ID:15485132"
+          android:textColor="#666"
+          android:textSize="16sp"
+          tools:ignore="HardcodedText"
+          />
+
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+  </android.support.v7.widget.LinearLayoutCompat>
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_margin="10dp"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      >
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        >
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:src="@drawable/ic_info_dialog_level"
+          />
+
+      <android.support.v7.widget.LinearLayoutCompat
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="10dp"
+          android:orientation="vertical"
+          >
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用户等级"
+            android:textColor="#F4C602"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText"
+            />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_user_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25"
+            android:textColor="#F4C602"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText"
+            />
+
+      </android.support.v7.widget.LinearLayoutCompat>
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        >
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:src="@drawable/ic_info_dialog_renzheng"
+          />
+
+      <android.support.v7.widget.LinearLayoutCompat
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="10dp"
+          android:orientation="vertical"
+          >
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用户认证"
+            android:textColor="#9E56B8"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText"
+            />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_user_renzhen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25"
+            android:textColor="#9E56B8"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText"
+            />
+
+      </android.support.v7.widget.LinearLayoutCompat>
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+
+  </android.support.v7.widget.LinearLayoutCompat>
+
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_user_sign"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_margin="15dp"
+      android:text="Ta 好像忘记写签名了……"
+      android:textColor="#666"
+      android:textSize="16sp"
+      tools:ignore="HardcodedText"
+      />
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="15dp"
+      android:orientation="vertical"
+      >
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+
+      <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_user_songchu"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:paddingStart="30dp"
+          android:text="送出：3.6万"
+          android:textColor="#CFAA7E"
+          android:textSize="16sp"
+          tools:ignore="HardcodedText"
+          />
+
+      <View
+          android:layout_width="1dp"
+          android:layout_height="15dp"
+          android:background="#aaa"
+          />
+
+      <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/tv_user_bopiao"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:paddingStart="30dp"
+          android:text="播票：236.5 万"
+          android:textColor="#CFAA7E"
+          android:textSize="16sp"
+          tools:ignore="HardcodedText"
+          />
+      
+    </android.support.v7.widget.LinearLayoutCompat>
+
+  </android.support.v7.widget.LinearLayoutCompat>
+
+</android.support.v7.widget.LinearLayoutCompat>

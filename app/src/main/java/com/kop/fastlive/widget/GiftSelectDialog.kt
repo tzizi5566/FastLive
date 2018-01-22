@@ -57,8 +57,8 @@ class GiftSelectDialog(val activity: Activity) : TransParentDialog(
   private val mHandler = MyHandler(this)
 
   companion object {
-    private val WHAT_UPDATE_TIME = 0
-    private val WHAT_MINUTES_TIME = 1
+    private const val WHAT_UPDATE_TIME = 0
+    private const val WHAT_MINUTES_TIME = 1
   }
 
   init {
