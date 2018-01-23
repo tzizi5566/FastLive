@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/vip_enter_bkg"
+    >
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/tv_user_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:layout_marginStart="10dp"
+      android:text="某某进入房间"
+      android:textColor="#fff"
+      android:textSize="18sp"
+      tools:ignore="HardcodedText"
+      />
+
+  <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/iv_splash"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:paddingBottom="4dp"
+      android:paddingTop="4dp"
+      android:src="@drawable/vip_enter_splash"
+      />
+
+</RelativeLayout>

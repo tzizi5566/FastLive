@@ -74,6 +74,13 @@
       app:layout_goneMarginBottom="42dp"
       />
 
+  <com.kop.fastlive.widget.VipEnterView
+      android:id="@+id/vip_enter"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toTopOf="@+id/msg_list"
+      />
+
   <com.kop.fastlive.widget.BottomControlView
       android:id="@+id/bottom_control_view"
       android:layout_width="match_parent"

@@ -38,10 +38,6 @@ class LiveListFragment : Fragment() {
 
     registerListener()
     setAdapter()
-  }
-
-  override fun onResume() {
-    super.onResume()
     getLiveListData()
   }
 

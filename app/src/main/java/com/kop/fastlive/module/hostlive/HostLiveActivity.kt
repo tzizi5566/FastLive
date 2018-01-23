@@ -61,6 +61,7 @@ import kotlinx.android.synthetic.main.activity_host_live.keyboard
 import kotlinx.android.synthetic.main.activity_host_live.live_view
 import kotlinx.android.synthetic.main.activity_host_live.msg_list
 import kotlinx.android.synthetic.main.activity_host_live.title_view
+import kotlinx.android.synthetic.main.activity_host_live.vip_enter
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
@@ -111,7 +112,7 @@ class HostLiveActivity : AppCompatActivity(),
           runOnUiThread {
             heart_layout.addHeart(NumUtil.getRandomColor())
           }
-        }, 0, 1500)
+        }, 0, 1000)
 
         mUserObjectId = SPUtils.getInstance().getString("objectId")
       }
@@ -125,35 +126,34 @@ class HostLiveActivity : AppCompatActivity(),
   private fun quitRoom() {
     val objectId = intent.getStringExtra("objectId")
 
-    val customCmd = ILVCustomCmd()
-    customCmd.type = ILVText.ILVTextType.eGroupMsg
-    customCmd.cmd = ILVLiveConstants.ILVLIVE_CMD_LEAVE
-    customCmd.destId = ILiveRoomManager.getInstance().imGroupId
-
-    ILVLiveManager.getInstance().sendCustomCmd(customCmd, object : ILiveCallBack<TIMMessage> {
-      override fun onSuccess(data: TIMMessage?) {
-        ILVLiveManager.getInstance().quitRoom(object : ILiveCallBack<Int> {
-          override fun onSuccess(data: Int?) {
-            ILVLiveManager.getInstance().onDestory()
-          }
-
-          override fun onError(module: String?, errCode: Int, errMsg: String?) {
-
-          }
-        })
-      }
-
-      override fun onError(module: String?, errCode: Int, errMsg: String?) {
-
-      }
-    })
-
     AVQuery.doCloudQueryInBackground(
         "delete from RoomInfo where objectId='$objectId'",
         object : CloudQueryCallback<AVCloudQueryResult>() {
           override fun done(p0: AVCloudQueryResult?, p1: AVException?) {
             if (p1 == null) {
-              Toast.makeText(applicationContext, "退出直播成功！", Toast.LENGTH_SHORT).show()
+              val customCmd = ILVCustomCmd()
+              customCmd.type = ILVText.ILVTextType.eGroupMsg
+              customCmd.cmd = ILVLiveConstants.ILVLIVE_CMD_LEAVE
+              customCmd.destId = ILiveRoomManager.getInstance().imGroupId
+
+              ILVLiveManager.getInstance().sendCustomCmd(customCmd,
+                  object : ILiveCallBack<TIMMessage> {
+                    override fun onSuccess(data: TIMMessage?) {
+                      ILVLiveManager.getInstance().quitRoom(object : ILiveCallBack<Int> {
+                        override fun onSuccess(data: Int?) {
+                          ILVLiveManager.getInstance().onDestory()
+                        }
+
+                        override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+                        }
+                      })
+                    }
+
+                    override fun onError(module: String?, errCode: Int, errMsg: String?) {
+
+                    }
+                  })
             }
           }
         })
@@ -415,6 +415,7 @@ class HostLiveActivity : AppCompatActivity(),
 
         cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_ENTER -> {
           title_view.addWatcher(it)
+          vip_enter.showVipEnter(it)
         }
 
         cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_LEAVE -> {

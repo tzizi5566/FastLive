@@ -55,6 +55,7 @@ import kotlinx.android.synthetic.main.activity_watcher_live.keyboard
 import kotlinx.android.synthetic.main.activity_watcher_live.live_view
 import kotlinx.android.synthetic.main.activity_watcher_live.msg_list
 import kotlinx.android.synthetic.main.activity_watcher_live.title_view
+import kotlinx.android.synthetic.main.activity_watcher_live.vip_enter
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
@@ -88,7 +89,7 @@ class WatcherLiveActivity : AppCompatActivity(),
     mKeyboardHeightProvider = KeyboardHeightProvider(this)
     cl_view.post({ mKeyboardHeightProvider?.start() })
 
-    live_view.setOnClickListener {
+    heart_layout.setOnClickListener {
       val ilvCustomCmd = ILVCustomCmd()
       ilvCustomCmd.type = ILVTextType.eGroupMsg
       ilvCustomCmd.cmd = ChatType.CMD_CHAT_GIFT
@@ -154,7 +155,7 @@ class WatcherLiveActivity : AppCompatActivity(),
           runOnUiThread {
             heart_layout.addHeart(NumUtil.getRandomColor())
           }
-        }, 0, 1500)
+        }, 0, 1000)
 
         mUserObjectId = SPUtils.getInstance().getString("objectId")
       }
@@ -392,6 +393,7 @@ class WatcherLiveActivity : AppCompatActivity(),
 
         cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_ENTER -> {
           title_view.addWatcher(it)
+          vip_enter.showVipEnter(it)
         }
 
         cmd?.cmd == ILVLiveConstants.ILVLIVE_CMD_LEAVE -> {
