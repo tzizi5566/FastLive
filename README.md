@@ -4,7 +4,7 @@
 </div>
 
 ## APP APK ##
-[![](https://img.shields.io/badge/downloads-v%201.0-brightgreen.svg)](https://www.pgyer.com/nIfz)
+[![](https://img.shields.io/badge/downloads-v%201.0-brightgreen.svg)](https://www.pgyer.com/Bu05)
 
 ## APP PICS ##
 |登录|直播列表|个人信息|创建直播|
