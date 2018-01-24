@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:fitsSystemWindows="true"
     tools:context=".module.login.LoginActivity"
     >
 
@@ -24,7 +25,7 @@
       android:id="@+id/ll_user_name"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="20dp"
+      android:layout_marginTop="28dp"
       android:gravity="center_vertical"
       android:orientation="horizontal"
       android:padding="20dp"

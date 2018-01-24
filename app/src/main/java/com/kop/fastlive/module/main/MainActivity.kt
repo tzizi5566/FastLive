@@ -11,6 +11,7 @@ import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.FindCallback
 import com.avos.avoscloud.SaveCallback
 import com.blankj.utilcode.util.SPUtils
+import com.gyf.barlibrary.ImmersionBar
 import com.kop.fastlive.PermissionCheckActivity
 import com.kop.fastlive.R
 import com.kop.fastlive.module.createlive.CreateLiveActivity
@@ -29,6 +30,11 @@ class MainActivity : PermissionCheckActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+
+    ImmersionBar.with(this)
+        .fitsSystemWindows(true)
+        .statusBarColor(R.color.colorPrimaryDark)
+        .init()
 
     setupTab()
 

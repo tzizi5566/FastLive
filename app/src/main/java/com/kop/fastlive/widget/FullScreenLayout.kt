@@ -33,6 +33,6 @@ class FullScreenLayout : ContentFrameLayout {
       mB = bottom
       isFist = false
     }
-    getChildAt(0).layout(mL, mT, mR, mB);
+    getChildAt(0).layout(mL, mT, mR, mB)
   }
 }

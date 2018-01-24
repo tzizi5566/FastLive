@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.SaveCallback
+import com.gyf.barlibrary.ImmersionBar
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.PermissionCheckActivity
 import com.kop.fastlive.R
@@ -34,6 +35,11 @@ class CreateLiveActivity : PermissionCheckActivity(), OnClickListener {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_create_live)
+
+    ImmersionBar.with(this)
+        .fitsSystemWindows(true)
+        .statusBarColor(R.color.colorPrimaryDark)
+        .init()
 
     registerListener()
     registerCreateRoom()

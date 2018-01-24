@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.blankj.utilcode.util.SPUtils
+import com.gyf.barlibrary.ImmersionBar
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.module.editprofile.EditProfileActivity
@@ -26,6 +27,10 @@ class LoginActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_login)
+
+    ImmersionBar.with(this)
+        .statusBarDarkFont(true, 0.2f)
+        .init()
 
     registerListener()
   }

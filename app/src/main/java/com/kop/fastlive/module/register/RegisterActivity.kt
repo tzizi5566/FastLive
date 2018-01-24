@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import com.gyf.barlibrary.ImmersionBar
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.module.editprofile.EditProfileActivity
@@ -23,6 +24,11 @@ class RegisterActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_register)
+
+    ImmersionBar.with(this)
+        .fitsSystemWindows(true)
+        .statusBarColor(R.color.colorPrimaryDark)
+        .init()
 
     registerListener()
   }

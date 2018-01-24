@@ -1,6 +1,8 @@
 package com.kop.fastlive
 
-import android.app.Application
+import android.content.Context
+import android.support.multidex.MultiDex
+import android.support.multidex.MultiDexApplication
 import com.avos.avoscloud.AVOSCloud
 import com.blankj.utilcode.util.Utils
 import com.kop.fastlive.module.editprofile.CustomProfile
@@ -12,13 +14,12 @@ import com.tencent.livesdk.ILVLiveConfig
 import com.tencent.livesdk.ILVLiveManager
 
 
-
 /**
  * 功    能: //TODO
  * 创 建 人: KOP
  * 创建日期: 2017/12/19 16:51
  */
-class MyApplication : Application() {
+class MyApplication : MultiDexApplication() {
 
   private val mLiveConfig = ILVLiveConfig()
   private lateinit var mSelfProfile: TIMUserProfile
@@ -64,5 +65,10 @@ class MyApplication : Application() {
 
   fun getLiveConfig(): ILVLiveConfig {
     return mLiveConfig
+  }
+
+  override fun attachBaseContext(context: Context) {
+    super.attachBaseContext(context)
+    MultiDex.install(this)
   }
 }

@@ -14,6 +14,7 @@ import com.avos.avoscloud.GetCallback
 import com.avos.avoscloud.SaveCallback
 import com.blankj.utilcode.util.SPUtils
 import com.google.gson.Gson
+import com.gyf.barlibrary.ImmersionBar
 import com.kop.fastlive.MyApplication
 import com.kop.fastlive.R
 import com.kop.fastlive.model.ChatMsgInfo
@@ -74,6 +75,11 @@ class WatcherLiveActivity : AppCompatActivity(),
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_watcher_live)
+
+    ImmersionBar.with(this)
+        .titleBar(title_view, false)
+        .transparentStatusBar()
+        .init()
 
     bottom_control_view.setIsHost(false)
 
