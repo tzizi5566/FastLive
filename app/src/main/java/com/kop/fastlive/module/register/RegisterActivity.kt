@@ -109,7 +109,7 @@ class RegisterActivity : AppCompatActivity() {
     TIMFriendshipManager.getInstance().getSelfProfile(object : TIMValueCallBack<TIMUserProfile> {
       override fun onSuccess(p0: TIMUserProfile?) {
         p0?.let {
-          (application as MyApplication).setUserProfile(p0)
+          (application as MyApplication).setUserProfile(it)
         }
       }
 

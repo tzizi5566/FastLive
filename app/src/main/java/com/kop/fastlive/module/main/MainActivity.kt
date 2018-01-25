@@ -80,7 +80,7 @@ class MainActivity : PermissionCheckActivity() {
     TIMFriendshipManager.getInstance().getSelfProfile(object : TIMValueCallBack<TIMUserProfile> {
       override fun onSuccess(p0: TIMUserProfile?) {
         p0?.let {
-          val userProfile: TIMUserProfile = p0
+          val userProfile: TIMUserProfile = it
           val avQuery = AVQuery<AVObject>("UserInfo")
           avQuery.whereContains("user_id", userProfile.identifier)
           avQuery.findInBackground(object : FindCallback<AVObject>() {
