@@ -17,7 +17,7 @@
       app:layout_constraintBottom_toBottomOf="parent"
       />
 
-  <RelativeLayout
+  <com.kop.fastlive.widget.FullScreenLayout
       android:layout_width="0dp"
       android:layout_height="0dp"
       app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +32,7 @@
         android:layout_height="match_parent"
         />
 
-  </RelativeLayout>
+  </com.kop.fastlive.widget.FullScreenLayout>
 
   <com.kop.fastlive.widget.TitleView
       android:id="@+id/title_view"

@@ -88,7 +88,7 @@ class HostLiveActivity : AppCompatActivity(),
         .transparentStatusBar()
         .init()
 
-    bottom_control_view.setIsHost(true)
+//    bottom_control_view.setIsHost(true)
 
     registerListener()
     ILVLiveManager.getInstance().setAvVideoView(live_view)
